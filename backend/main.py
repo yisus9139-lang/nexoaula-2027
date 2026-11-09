@@ -2216,16 +2216,26 @@ def obtener_estadisticas(
     total_estudiantes = len(estudiantes)
     ids_est = [e.id for e in estudiantes]
 
-    auds_corte = (
-        db.query(Auditoria2027)
-        .filter(
-            Auditoria2027.corte_id == corte.id,
-            Auditoria2027.estudiante_id.in_(ids_est),
-        )
-        .all()
-        if ids_est
-        else []
-    )
+    if ids_est:
+        if len(ids_est) <= 500:
+            auds_corte = (
+                db.query(Auditoria2027)
+                .filter(
+                    Auditoria2027.corte_id == corte.id,
+                    Auditoria2027.estudiante_id.in_(ids_est),
+                )
+                .all()
+            )
+        else:
+            set_ids = set(ids_est)
+            todas_auds = (
+                db.query(Auditoria2027)
+                .filter(Auditoria2027.corte_id == corte.id)
+                .all()
+            )
+            auds_corte = [a for a in todas_auds if a.estudiante_id in set_ids]
+    else:
+        auds_corte = []
     mapa_aud = {a.estudiante_id: a for a in auds_corte}
 
     auditados = 0
@@ -2321,14 +2331,23 @@ def obtener_estadisticas(
     continuan_anterior = None
 
     if corte_anterior and total_estudiantes > 0:
-        auds_prev = (
-            db.query(Auditoria2027)
-            .filter(
-                Auditoria2027.corte_id == corte_anterior.id,
-                Auditoria2027.estudiante_id.in_(ids_est),
+        if len(ids_est) <= 500:
+            auds_prev = (
+                db.query(Auditoria2027)
+                .filter(
+                    Auditoria2027.corte_id == corte_anterior.id,
+                    Auditoria2027.estudiante_id.in_(ids_est),
+                )
+                .all()
             )
-            .all()
-        )
+        else:
+            set_ids = set(ids_est)
+            todas_prev = (
+                db.query(Auditoria2027)
+                .filter(Auditoria2027.corte_id == corte_anterior.id)
+                .all()
+            )
+            auds_prev = [a for a in todas_prev if a.estudiante_id in set_ids]
         continuan_anterior = sum(1 for a in auds_prev if a.continua_2027 is True)
         pct_continuan_anterior = round(
             (continuan_anterior / total_estudiantes) * 100, 1

@@ -8,7 +8,7 @@ import {
   Loader2,
 } from 'lucide-react';
 
-export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUser, apiBase }) {
+export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUser, apiBase, corteId }) {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -61,7 +61,16 @@ export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUs
         reqHeaders['X-Session-Token'] = String(currentUser.session_token);
       }
 
-      const response = await fetch(`${finalApiBase}/upload-excel`, {
+      const baseUrl = finalApiBase || (typeof window !== 'undefined' ? window.location.origin : '');
+      const uploadUrl = new URL(
+        `${baseUrl}/upload-excel`,
+        typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000'
+      );
+      if (corteId) {
+        uploadUrl.searchParams.append('corte_id', String(corteId));
+      }
+
+      const response = await fetch(uploadUrl.toString(), {
         method: 'POST',
         headers: reqHeaders,
         body: formData,

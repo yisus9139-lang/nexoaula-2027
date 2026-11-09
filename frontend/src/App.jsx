@@ -311,7 +311,24 @@ export default function App() {
         }
 
         if (!resEst.ok || !resStats.ok || !resSalones.ok) {
-          throw new Error('Sin conexión con el servidor en el puerto 8000.');
+          let errDetail = '';
+          try {
+            const badRes = !resEst.ok ? resEst : !resStats.ok ? resStats : resSalones;
+            const errJson = await badRes.json();
+            errDetail = errJson.detail || '';
+          } catch {
+            // fallback
+          }
+          const isLocal =
+            typeof window !== 'undefined' &&
+            (window.location.hostname === 'localhost' ||
+              window.location.hostname === '127.0.0.1');
+          throw new Error(
+            errDetail ||
+              (isLocal
+                ? 'No pudimos conectar con el servidor local. Verifica que el backend esté ejecutándose en el puerto 8000.'
+                : 'No pudimos sincronizar con el servidor en la nube. Verifica tu conexión e intenta de nuevo.')
+          );
         }
 
         const [dataEst, dataStats, dataSalones] = await Promise.all([
@@ -2082,10 +2099,15 @@ export default function App() {
       <UploadExcelModal
         isOpen={isUploadOpen && isAdmin}
         currentUser={currentUser}
+        corteId={corteSeleccionadoId}
         apiBase={API_BASE}
         onClose={() => setIsUploadOpen(false)}
         onSuccess={(msg) => {
           showToast(msg);
+          setSede('');
+          setGrado('');
+          setGrupo('');
+          setBuscar('');
           fetchDatos();
         }}
       />

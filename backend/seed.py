@@ -474,7 +474,10 @@ def sincronizar_salones_con_estudiantes(db, corte_id: int = None):
             )
             nuevos += 1
     if nuevos > 0:
-        db.commit()
+        try:
+            db.commit()
+        except Exception:
+            db.rollback()
 
 
 def seed_database(db, force_reset: bool = False, populate_mock: bool = False) -> int:
