@@ -23,6 +23,8 @@ import {
   Play,
   MoreVertical,
   DoorOpen,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import KpiAndCharts from './components/KpiAndCharts';
 import StudentAuditRow from './components/StudentAuditRow';
@@ -89,6 +91,35 @@ function playSubtleChime() {
 }
 
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nexoaula_theme');
+      return saved === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    const metaTheme = document.getElementById('theme-color-meta');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'dark' ? '#000000' : '#F8F8F8');
+    }
+    try {
+      localStorage.setItem('nexoaula_theme', theme);
+    } catch {}
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('nexoaula_user');
@@ -1168,6 +1199,21 @@ export default function App() {
                 </span>
               </button>
 
+              {/* Selector de Modo Claro / Modo Oscuro */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                aria-label={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                className="w-9 h-9 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-neutral-300 hover:text-white border border-[#262626] flex items-center justify-center transition-colors"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 text-white" />
+                ) : (
+                  <Moon className="w-4 h-4 text-slate-800" />
+                )}
+              </button>
+
               {/* Perfil Escritorio */}
               {currentUser && (
                 <>
@@ -1302,6 +1348,27 @@ export default function App() {
                       >
                         <BookOpen className="w-4 h-4 text-neutral-400 shrink-0" />
                         <span>Guía de Diseño y UX</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          toggleTheme();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-300 hover:text-white hover:bg-[#171717] transition-colors text-left"
+                      >
+                        {theme === 'dark' ? (
+                          <>
+                            <Sun className="w-4 h-4 text-white shrink-0" />
+                            <span>Modo Claro</span>
+                          </>
+                        ) : (
+                          <>
+                            <Moon className="w-4 h-4 text-slate-800 shrink-0" />
+                            <span>Modo Oscuro</span>
+                          </>
+                        )}
                       </button>
                     </div>
 

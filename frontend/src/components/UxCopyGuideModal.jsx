@@ -37,16 +37,20 @@ export default function UxCopyGuideModal({ isOpen, onClose }) {
 
   const tokensItems = [
     {
-      token: 'Blanco Puro (#FFFFFF)',
-      uso: 'Asistió hoy, Continúa en 2027, Documentos completos y Ficha auditada.',
+      token: 'Modo Oscuro (#000000)',
+      uso: 'Versión original profunda en negro puro, reduce la fatiga visual y mantiene máxima nitidez en interiores.',
     },
     {
-      token: 'Gris Neutro (#A3A3A3 / #262626)',
-      uso: 'Auditoría pendiente, documentos en trámite o salones pre-asignados.',
+      token: 'Modo Claro (#F8F8F8 / #FFFFFF)',
+      uso: 'Optimizado para trabajo en campo bajo luz solar directa con alto contraste de texto.',
     },
     {
-      token: 'Negro Profundo (#000000 / #0A0A0A)',
-      uso: 'Lienzo principal, ausencias hoy y bajas documentadas sin fatiga visual.',
+      token: 'Selector Rápido (Sol / Luna)',
+      uso: 'Permite alternar entre Modo Claro y Oscuro al instante en la barra superior con persistencia automática.',
+    },
+    {
+      token: 'Tokens Monocromáticos',
+      uso: 'Sin saturación de color para una auditoría ejecutiva, limpia y rápida.',
     },
   ];
 
