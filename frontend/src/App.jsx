@@ -109,7 +109,7 @@ export default function App() {
     }
     const metaTheme = document.getElementById('theme-color-meta');
     if (metaTheme) {
-      metaTheme.setAttribute('content', theme === 'dark' ? '#000000' : '#F8F8F8');
+      metaTheme.setAttribute('content', theme === 'dark' ? '#000000' : '#FFFFFF');
     }
     try {
       localStorage.setItem('nexoaula_theme', theme);

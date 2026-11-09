@@ -41,7 +41,7 @@ export default function UxCopyGuideModal({ isOpen, onClose }) {
       uso: 'Versión original profunda en negro puro, reduce la fatiga visual y mantiene máxima nitidez en interiores.',
     },
     {
-      token: 'Modo Claro (#F8F8F8 / #FFFFFF)',
+      token: 'Modo Claro (#FFFFFF)',
       uso: 'Optimizado para trabajo en campo bajo luz solar directa con alto contraste de texto.',
     },
     {

@@ -110,25 +110,25 @@
 }
 
 [data-theme="light"] body {
-  background-color: #F8F8F8 !important;
+  background-color: #FFFFFF !important;
   color: #0F172A !important;
 }
 
 /* Backgrounds */
 [data-theme="light"] .bg-\[\#000000\] {
-  background-color: #F8F8F8 !important;
+  background-color: #FFFFFF !important;
 }
 [data-theme="light"] .bg-\[\#050505\] {
-  background-color: #F8F8F8 !important;
+  background-color: #FFFFFF !important;
 }
 [data-theme="light"] .bg-\[\#000000\]\/95 {
   background-color: rgba(255, 255, 255, 0.95) !important;
 }
 [data-theme="light"] .bg-\[\#000000\]\/80 {
-  background-color: rgba(248, 248, 248, 0.85) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 [data-theme="light"] .bg-\[\#000000\]\/60 {
-  background-color: rgba(248, 248, 248, 0.7) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
 }
 [data-theme="light"] .bg-black\/85 {
   background-color: rgba(15, 23, 42, 0.6) !important;
@@ -290,12 +290,12 @@
 /* Sticky Headers */
 [data-theme="light"] thead.sticky,
 [data-theme="light"] thead {
-  background-color: #F8F8F8 !important;
+  background-color: #FFFFFF !important;
 }
 
 /* Scrollbars in Light Mode */
 [data-theme="light"] ::-webkit-scrollbar-track {
-  background: #F8F8F8 !important;
+  background: #FFFFFF !important;
 }
 [data-theme="light"] ::-webkit-scrollbar-thumb {
   background: #CBD5E1 !important;
