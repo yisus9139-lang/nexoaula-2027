@@ -6,12 +6,10 @@ import {
   Upload,
   Download,
   CheckCircle2,
-  Building2,
   Users,
   AlertCircle,
   LogOut,
   Route,
-  CalendarRange,
   Lock,
   SlidersHorizontal,
   BookOpen,
@@ -1044,8 +1042,7 @@ export default function App() {
               <>
                 <div className="h-4 w-[1px] bg-[#262626] hidden sm:block" />
                 <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-1.5 h-8 px-2 sm:px-2.5 rounded-lg bg-[#0A0A0A] border border-[#262626] hover:border-[#404040] transition-colors">
-                    <CalendarRange className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+                  <div className="flex items-center h-8 px-2 sm:px-2.5 rounded-lg bg-[#0A0A0A] border border-[#262626] hover:border-[#404040] transition-colors">
                     <select
                       value={corteSeleccionadoId || ''}
                       onChange={(e) =>
@@ -1737,12 +1734,11 @@ export default function App() {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1">
                 {/* Sede */}
-                <div className="relative">
-                  <Building2 className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div>
                   <select
                     value={sede}
                     onChange={(e) => handleSedeChange(e.target.value)}
-                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl pl-8 pr-3 text-xs text-white focus:outline-none transition-colors"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="">
                       {isAdmin ? 'Todas las sedes' : 'Sedes de Mi Ruta'}
@@ -1760,7 +1756,7 @@ export default function App() {
                   <select
                     value={grado}
                     onChange={(e) => handleGradoChange(e.target.value)}
-                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3 text-xs text-white focus:outline-none transition-colors"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="">
                       {isAdmin ? 'Todos los grados' : 'Grados de Mi Ruta'}
@@ -1774,12 +1770,11 @@ export default function App() {
                 </div>
 
                 {/* Grupo */}
-                <div className="relative">
-                  <Users className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div>
                   <select
                     value={grupo}
                     onChange={(e) => setGrupo(e.target.value)}
-                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl pl-8 pr-3 text-xs text-white focus:outline-none transition-colors"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="">
                       {isAdmin ? 'Todos los grupos' : 'Grupos de Mi Ruta'}
@@ -1819,29 +1814,26 @@ export default function App() {
 
               {/* Buscador + Filtro Pendientes */}
               <div className="flex items-center gap-2 lg:w-[380px]">
-                <div className="relative flex-1">
-                  <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div className="flex-1">
                   <input
                     type="text"
                     value={buscar}
                     onChange={(e) => setBuscar(e.target.value)}
                     placeholder="Buscar estudiante..."
-                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl pl-8 pr-3 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
                   />
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setSoloPendientes(!soloPendientes)}
-                  className={`h-10 px-3 rounded-xl text-xs font-semibold border flex items-center gap-1.5 transition-all shrink-0 ${
+                  className={`h-10 px-3.5 rounded-xl text-xs font-semibold border flex items-center justify-center transition-all shrink-0 ${
                     soloPendientes
                       ? 'bg-white text-[#000000] border-white'
                       : 'bg-[#0A0A0A] text-neutral-400 border-[#262626] hover:text-white'
                   }`}
                 >
-                  <Filter className="w-3.5 h-3.5 shrink-0" />
-                  <span className="hidden sm:inline">Pendientes</span>
-                  <span className="sm:hidden">Pend.</span>
+                  <span>Pendientes</span>
                 </button>
 
                 {(sede || grado || grupo || buscar || soloPendientes) && (
@@ -1849,9 +1841,9 @@ export default function App() {
                     type="button"
                     onClick={handleLimpiarFiltros}
                     title="Limpiar filtros"
-                    className="h-10 w-10 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-neutral-400 hover:text-white border border-[#262626] flex items-center justify-center transition-colors shrink-0"
+                    className="h-10 px-3 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-neutral-400 hover:text-white border border-[#262626] text-xs font-semibold flex items-center justify-center transition-colors shrink-0"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Limpiar</span>
                   </button>
                 )}
               </div>
