@@ -15,7 +15,7 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=8000 \
-    NEXO_DB_PATH=/app/data/nexoaula.db
+    NEXO_DB_PATH=/app/backend/nexoaula.db
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
