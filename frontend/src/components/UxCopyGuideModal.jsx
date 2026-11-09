@@ -37,40 +37,36 @@ export default function UxCopyGuideModal({ isOpen, onClose }) {
 
   const tokensItems = [
     {
-      token: 'Azul Institucional (#005FB8)',
-      uso: 'Acciones principales, botones de confirmación, llamadas de lista activas y navegación seleccionada.',
-    },
-    {
       token: 'Blanco Puro (#FFFFFF)',
-      uso: 'Tarjetas de información, modales, celdas de estudiantes y contenedores principales.',
+      uso: 'Asistió hoy, Continúa en 2027, Documentos completos y Ficha auditada.',
     },
     {
-      token: 'Gris Lienzo (#F8F8F8)',
-      uso: 'Fondo general de la pantalla, franjas de cabecera en tablas y sub-secciones.',
+      token: 'Gris Neutro (#A3A3A3 / #262626)',
+      uso: 'Auditoría pendiente, documentos en trámite o salones pre-asignados.',
     },
     {
-      token: 'Slate Contraste (#0F172A / #334155)',
-      uso: 'Jerarquía tipográfica nítida de alta legibilidad para trabajo bajo luz solar en terreno.',
+      token: 'Negro Profundo (#000000 / #0A0A0A)',
+      uso: 'Lienzo principal, ausencias hoy y bajas documentadas sin fatiga visual.',
     },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white border border-slate-200 rounded-2xl max-w-3xl w-full p-6 shadow-2xl max-h-[85vh] flex flex-col text-slate-900">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-[#0A0A0A] border border-[#262626] rounded-2xl max-w-3xl w-full p-6 shadow-2xl max-h-[85vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+        <div className="flex items-center justify-between pb-4 border-b border-[#1F1F1F]">
           <div>
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[#005FB8]" />
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-white" />
               Sistema de Diseño y Guía de UX Writing
             </h3>
-            <p className="text-[11px] text-slate-500 mt-0.5">
-              Criterios de microcopy y tokens en Modo Claro (#FFFFFF / #F8F8F8 / #005FB8) para auditoría en terreno
+            <p className="text-[11px] text-neutral-400 mt-0.5">
+              Criterios de microcopy y tokens monocromáticos para auditoría en terreno
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-[#171717] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -79,24 +75,24 @@ export default function UxCopyGuideModal({ isOpen, onClose }) {
         {/* Body en Tablas Estructuradas sin contenedores anidados */}
         <div className="py-5 space-y-6 overflow-y-auto pr-1">
           <div className="space-y-2">
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              1. Tokens Semánticos de Interfaz
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+              1. Tokens Semánticos Monocromáticos (#000000)
             </h4>
-            <div className="overflow-x-auto border border-slate-200 rounded-xl shadow-xs">
+            <div className="overflow-x-auto border-t border-[#262626]">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-[#F8F8F8] text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  <tr className="border-b border-[#262626] text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                     <th className="py-2 px-3">Token</th>
                     <th className="py-2 px-3">Significado Operativo</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
+                <tbody className="divide-y divide-[#1F1F1F]">
                   {tokensItems.map((t) => (
-                    <tr key={t.token} className="hover:bg-slate-50">
-                      <td className="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap font-mono text-[11px]">
+                    <tr key={t.token} className="hover:bg-[#121212]">
+                      <td className="py-2.5 px-3 font-bold text-white whitespace-nowrap font-mono text-[11px]">
                         {t.token}
                       </td>
-                      <td className="py-2.5 px-3 text-slate-600">{t.uso}</td>
+                      <td className="py-2.5 px-3 text-neutral-300">{t.uso}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -105,33 +101,33 @@ export default function UxCopyGuideModal({ isOpen, onClose }) {
           </div>
 
           <div className="space-y-2">
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
               2. Mensajes Clave de Interfaz (Microcopy)
             </h4>
-            <div className="overflow-x-auto border border-slate-200 rounded-xl shadow-xs">
+            <div className="overflow-x-auto border-t border-[#262626]">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-[#F8F8F8] text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  <tr className="border-b border-[#262626] text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                     <th className="py-2 px-3">Escenario</th>
                     <th className="py-2 px-3">Titular y Mensaje</th>
                     <th className="py-2 px-3">Tono</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 bg-white">
+                <tbody className="divide-y divide-[#1F1F1F]">
                   {microcopyItems.map((item) => (
-                    <tr key={item.escenario} className="hover:bg-slate-50">
-                      <td className="py-2.5 px-3 font-bold text-slate-700 whitespace-nowrap">
+                    <tr key={item.escenario} className="hover:bg-[#121212]">
+                      <td className="py-2.5 px-3 font-bold text-neutral-300 whitespace-nowrap">
                         {item.escenario}
                       </td>
                       <td className="py-2.5 px-3">
-                        <span className="font-bold text-slate-900 block">
+                        <span className="font-bold text-white block">
                           {item.titulo}
                         </span>
-                        <span className="text-slate-500 text-[11px]">
+                        <span className="text-neutral-400 text-[11px]">
                           {item.mensaje}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-slate-500 whitespace-nowrap text-[11px]">
+                      <td className="py-2.5 px-3 text-neutral-400 whitespace-nowrap text-[11px]">
                         {item.tono}
                       </td>
                     </tr>
@@ -143,10 +139,10 @@ export default function UxCopyGuideModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end pt-4 border-t border-slate-200">
+        <div className="flex justify-end pt-4 border-t border-[#1F1F1F]">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white transition-colors shadow-xs"
+            className="px-5 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-neutral-200 text-[#000000] transition-colors"
           >
             Entendido
           </button>

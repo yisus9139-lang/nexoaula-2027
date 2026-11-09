@@ -1016,46 +1016,46 @@ export default function App() {
   const cerradosCount = salones.filter((s) => s.estado === 'COMPLETADO').length;
 
   return (
-    <div className="min-h-screen bg-[#F8F8F8] text-slate-900 pb-24">
+    <div className="min-h-screen bg-[#000000] text-white pb-24">
       {/* Toast flotante */}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 px-3.5 py-2.5 rounded-xl border shadow-xl backdrop-blur-md bg-white/95 border-slate-200 text-slate-900">
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 px-3.5 py-2.5 rounded-xl border shadow-2xl backdrop-blur-md bg-[#0A0A0A]/95 border-white/40 text-white">
           {toast.type === 'error' ? (
-            <AlertCircle className="w-4 h-4 text-rose-600" />
+            <AlertCircle className="w-4 h-4 text-white" />
           ) : (
-            <CheckCircle2 className="w-4 h-4 text-[#005FB8]" />
+            <CheckCircle2 className="w-4 h-4 text-white" />
           )}
           <span className="text-xs font-semibold">{toast.message}</span>
         </div>
       )}
 
       {/* BARRA SUPERIOR CON JERARQUÍA VISUAL Y MENÚ DESPLEGABLE EN MÓVIL / TABLET */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-30 bg-[#000000]/95 backdrop-blur-md border-b border-[#262626]">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2 sm:gap-3">
           {/* Izquierda: Marca + Selector de Periodo Compacto */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 whitespace-nowrap">
-              NexoAula<span className="text-[#005FB8]"> 2027</span>
+            <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-white whitespace-nowrap">
+              NexoAula<span className="hidden sm:inline"> 2027</span>
             </h1>
 
             {cortes.length > 0 && (
               <>
-                <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
+                <div className="h-4 w-[1px] bg-[#262626] hidden sm:block" />
                 <div className="flex items-center gap-1">
-                  <div className="flex items-center h-8 px-2 sm:px-2.5 rounded-lg bg-[#F8F8F8] border border-slate-200 hover:border-slate-300 transition-colors">
+                  <div className="flex items-center h-8 px-2 sm:px-2.5 rounded-lg bg-[#0A0A0A] border border-[#262626] hover:border-[#404040] transition-colors">
                     <select
                       value={corteSeleccionadoId || ''}
                       onChange={(e) =>
                         setCorteSeleccionadoId(Number(e.target.value))
                       }
                       aria-label="Seleccionar corte"
-                      className="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer max-w-[100px] sm:max-w-none truncate"
+                      className="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer max-w-[100px] sm:max-w-none truncate"
                     >
                       {cortes.map((c) => (
                         <option
                           key={c.id}
                           value={c.id}
-                          className="bg-white text-slate-900"
+                          className="bg-[#0A0A0A] text-white"
                         >
                           {formatNombreCorteCorto(c.nombre)}
                           {c.activo ? ' • Activo' : c.cerrado ? ' • Histórico' : ''}
@@ -1069,7 +1069,7 @@ export default function App() {
                       type="button"
                       onClick={() => setIsCortesModalOpen(true)}
                       title="Configurar cortes y periodos"
-                      className="hidden sm:flex w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 items-center justify-center transition-colors shadow-xs"
+                      className="hidden sm:flex w-8 h-8 rounded-lg bg-[#0A0A0A] hover:bg-[#171717] text-neutral-400 hover:text-white border border-[#262626] items-center justify-center transition-colors"
                     >
                       <SlidersHorizontal className="w-3.5 h-3.5" />
                     </button>
@@ -1098,13 +1098,13 @@ export default function App() {
                   }
                   className={`relative w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${
                     solicitudesPendientes.length > 0
-                      ? 'bg-[#005FB8] text-white border-[#005FB8] animate-pulse shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border-slate-200'
+                      ? 'bg-white text-[#000000] border-white animate-pulse'
+                      : 'bg-[#0A0A0A] hover:bg-[#171717] text-neutral-400 hover:text-white border-[#262626]'
                   }`}
                 >
                   <Bell className="w-4 h-4" />
                   {solicitudesPendientes.length > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-white text-[#005FB8] border border-[#005FB8] text-[10px] font-extrabold flex items-center justify-center shadow-xs">
+                    <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#000000] text-white border border-white text-[10px] font-extrabold flex items-center justify-center">
                       {solicitudesPendientes.length}
                     </span>
                   )}
@@ -1116,7 +1116,7 @@ export default function App() {
                 type="button"
                 onClick={() => setIsUxGuideOpen(true)}
                 title="Guía de Diseño y UX"
-                className="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 flex items-center justify-center transition-colors shadow-xs"
+                className="w-9 h-9 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-neutral-400 hover:text-white border border-[#262626] flex items-center justify-center transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
               </button>
@@ -1127,7 +1127,7 @@ export default function App() {
                   type="button"
                   onClick={() => setIsUploadOpen(true)}
                   title="Importar padrón Excel (.xlsx)"
-                  className="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 flex items-center justify-center transition-colors shadow-xs"
+                  className="w-9 h-9 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-neutral-300 hover:text-white border border-[#262626] flex items-center justify-center transition-colors"
                 >
                   <Upload className="w-4 h-4" />
                 </button>
@@ -1139,9 +1139,9 @@ export default function App() {
                   type="button"
                   onClick={() => setIsUsersAdminOpen(true)}
                   title="Gestionar equipo auditor y rutas"
-                  className="flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 transition-colors shadow-xs"
+                  className="flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl text-xs font-semibold bg-[#121212] hover:bg-[#1F1F1F] text-white border border-[#262626] transition-colors"
                 >
-                  <Users className="w-3.5 h-3.5 text-slate-600" />
+                  <Users className="w-3.5 h-3.5 text-neutral-300" />
                   <span>Equipo</span>
                 </button>
               )}
@@ -1156,7 +1156,7 @@ export default function App() {
                     ? 'Descargar reporte consolidado en Excel'
                     : 'Descargar Excel exclusivamente de los salones de Mi Ruta'
                 }
-                className="flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white shadow-sm transition-all disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000] shadow-sm transition-all disabled:opacity-50"
               >
                 <Download className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>
@@ -1171,19 +1171,19 @@ export default function App() {
               {/* Perfil Escritorio */}
               {currentUser && (
                 <>
-                  <div className="h-5 w-[1px] bg-slate-200 mx-0.5" />
-                  <div className="flex items-center gap-1.5 pl-2 pr-1 h-9 rounded-xl bg-white border border-slate-200 shadow-xs">
-                    <span className="w-5 h-5 rounded-md bg-[#005FB8] text-[10px] font-bold text-white flex items-center justify-center uppercase">
+                  <div className="h-5 w-[1px] bg-[#262626] mx-0.5" />
+                  <div className="flex items-center gap-1.5 pl-2 pr-1 h-9 rounded-xl bg-[#0A0A0A] border border-[#262626]">
+                    <span className="w-5 h-5 rounded-md bg-[#1F1F1F] text-[10px] font-bold text-white flex items-center justify-center uppercase">
                       {currentUser.nombre?.charAt(0) || 'U'}
                     </span>
-                    <span className="text-xs font-semibold text-slate-800 max-w-[110px] truncate">
+                    <span className="text-xs font-semibold text-neutral-200 max-w-[110px] truncate">
                       {formatNombreUsuarioCorto(currentUser.nombre)}
                     </span>
                     <button
                       type="button"
                       onClick={handleLogout}
                       title="Cerrar sesión / Cambiar PIN"
-                      className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center transition-colors"
+                      className="w-7 h-7 rounded-lg text-neutral-400 hover:text-white hover:bg-[#171717] flex items-center justify-center transition-colors"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                     </button>
@@ -1203,10 +1203,10 @@ export default function App() {
                     setSeccionSalonesAbierta(true);
                   }}
                   title={`${solicitudesPendientes.length} solicitud(es) de salón`}
-                  className="relative w-9 h-9 rounded-xl bg-[#005FB8] text-white border border-[#005FB8] flex items-center justify-center animate-pulse shadow-sm"
+                  className="relative w-9 h-9 rounded-xl bg-white text-[#000000] border border-white flex items-center justify-center animate-pulse"
                 >
                   <Bell className="w-4 h-4" />
-                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-white text-[#005FB8] text-[9px] font-extrabold flex items-center justify-center shadow-xs">
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-[#000000] text-white text-[9px] font-extrabold flex items-center justify-center">
                     {solicitudesPendientes.length}
                   </span>
                 </button>
@@ -1221,8 +1221,8 @@ export default function App() {
                   aria-label="Menú de herramientas"
                   className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-colors ${
                     mobileMenuOpen
-                      ? 'bg-[#005FB8] text-white border-[#005FB8]'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 border-slate-200 shadow-xs'
+                      ? 'bg-white text-[#000000] border-white'
+                      : 'bg-[#0A0A0A] hover:bg-[#171717] text-neutral-300 hover:text-white border-[#262626]'
                   }`}
                 >
                   <MoreVertical className="w-4 h-4" />
@@ -1230,7 +1230,7 @@ export default function App() {
 
                 {/* Menú Flotante Organizado en Lista */}
                 {mobileMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl p-1.5 z-50 divide-y divide-slate-100 animate-fadeIn">
+                  <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#0A0A0A] border border-[#262626] shadow-[0_20px_50px_rgba(0,0,0,0.95)] p-1.5 z-50 divide-y divide-[#1F1F1F] animate-fadeIn">
                     {/* Lista de Herramientas y Acciones */}
                     <div className="p-1 space-y-0.5">
                       <button
@@ -1240,9 +1240,9 @@ export default function App() {
                           handleExportExcel();
                         }}
                         disabled={exporting}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white hover:bg-[#171717] transition-colors text-left"
                       >
-                        <Download className="w-4 h-4 text-[#005FB8] shrink-0" />
+                        <Download className="w-4 h-4 text-white shrink-0" />
                         <span>
                           {exporting
                             ? 'Generando Excel...'
@@ -1260,9 +1260,9 @@ export default function App() {
                               setMobileMenuOpen(false);
                               setIsUsersAdminOpen(true);
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors text-left"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white hover:bg-[#171717] transition-colors text-left"
                           >
-                            <Users className="w-4 h-4 text-slate-500 shrink-0" />
+                            <Users className="w-4 h-4 text-neutral-300 shrink-0" />
                             <span>Equipo Auditor y Rutas</span>
                           </button>
 
@@ -1272,9 +1272,9 @@ export default function App() {
                               setMobileMenuOpen(false);
                               setIsUploadOpen(true);
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors text-left"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white hover:bg-[#171717] transition-colors text-left"
                           >
-                            <Upload className="w-4 h-4 text-slate-500 shrink-0" />
+                            <Upload className="w-4 h-4 text-neutral-300 shrink-0" />
                             <span>Importar Padrón (.xlsx)</span>
                           </button>
 
@@ -1284,9 +1284,9 @@ export default function App() {
                               setMobileMenuOpen(false);
                               setIsCortesModalOpen(true);
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors text-left"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white hover:bg-[#171717] transition-colors text-left"
                           >
-                            <SlidersHorizontal className="w-4 h-4 text-slate-500 shrink-0" />
+                            <SlidersHorizontal className="w-4 h-4 text-neutral-300 shrink-0" />
                             <span>Gestionar Cortes y Periodos</span>
                           </button>
                         </>
@@ -1298,9 +1298,9 @@ export default function App() {
                           setMobileMenuOpen(false);
                           setIsUxGuideOpen(true);
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-300 hover:text-white hover:bg-[#171717] transition-colors text-left"
                       >
-                        <BookOpen className="w-4 h-4 text-slate-500 shrink-0" />
+                        <BookOpen className="w-4 h-4 text-neutral-400 shrink-0" />
                         <span>Guía de Diseño y UX</span>
                       </button>
                     </div>
@@ -1309,14 +1309,14 @@ export default function App() {
                     {currentUser && (
                       <div className="p-1 pt-1.5 space-y-1">
                         <div className="px-3 py-1.5 flex items-center gap-2.5">
-                          <span className="w-6 h-6 rounded-lg bg-[#005FB8] text-white text-xs font-extrabold flex items-center justify-center uppercase shrink-0">
+                          <span className="w-6 h-6 rounded-lg bg-white text-[#000000] text-xs font-extrabold flex items-center justify-center uppercase shrink-0">
                             {currentUser.nombre?.charAt(0) || 'U'}
                           </span>
                           <div className="min-w-0 flex-1">
-                            <span className="text-xs font-bold text-slate-900 block truncate">
+                            <span className="text-xs font-bold text-white block truncate">
                               {currentUser.nombre}
                             </span>
-                            <span className="text-[10px] uppercase font-semibold text-slate-500 block">
+                            <span className="text-[10px] uppercase font-semibold text-neutral-400 block">
                               {currentUser.rol === 'ADMIN' ? 'Coordinador General' : 'Auditor'}
                             </span>
                           </div>
@@ -1328,7 +1328,7 @@ export default function App() {
                             setMobileMenuOpen(false);
                             handleLogout();
                           }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors text-left"
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-[#171717] transition-colors text-left"
                         >
                           <LogOut className="w-4 h-4 shrink-0" />
                           <span>Cerrar Sesión / Cambiar PIN</span>
@@ -1351,21 +1351,21 @@ export default function App() {
             {solicitudesPendientes.map((sol) => (
               <div
                 key={`banner-${sol.sede}-${sol.grado}-${sol.grupo}`}
-                className="p-4 rounded-2xl bg-white border-2 border-[#005FB8] shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                className="p-4 rounded-2xl bg-[#0A0A0A] border-2 border-white shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-9 h-9 rounded-xl bg-blue-50 text-[#005FB8] font-bold flex items-center justify-center shrink-0 animate-pulse border border-blue-200">
+                  <span className="w-9 h-9 rounded-xl bg-white text-[#000000] font-bold flex items-center justify-center shrink-0 animate-pulse">
                     <Bell className="w-4 h-4" />
                   </span>
                   <div>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900">
+                    <p className="text-xs sm:text-sm font-bold text-white">
                       {sol.solicitado_por_nombre || 'Un auditor'} quiere apoyar con{' '}
-                      <span className="text-[#005FB8] font-extrabold underline">
+                      <span className="underline">
                         {formatGrado(sol.grado)} {sol.grupo}
                       </span>{' '}
                       ({sol.sede}). ¿Le habilitas este salón en su ruta?
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
+                    <p className="text-[11px] text-neutral-400 mt-0.5">
                       Solicitud en tiempo real para agregar el grupo a Mi Ruta.
                     </p>
                   </div>
@@ -1376,7 +1376,7 @@ export default function App() {
                     type="button"
                     disabled={salonActionLoading}
                     onClick={() => handleAprobarSolicitud(sol)}
-                    className="px-3.5 py-2 rounded-xl bg-[#005FB8] hover:bg-[#004C94] text-white text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-xs"
+                    className="px-3.5 py-2 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-extrabold flex items-center gap-1.5 transition-all"
                   >
                     <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                     Habilitar salón
@@ -1385,7 +1385,7 @@ export default function App() {
                     type="button"
                     disabled={salonActionLoading}
                     onClick={() => handleRechazarSolicitud(sol)}
-                    className="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1 transition-all"
+                    className="px-3 py-2 rounded-xl bg-[#141414] hover:bg-[#1F1F1F] text-neutral-300 border border-[#333333] text-xs font-semibold flex items-center gap-1 transition-all"
                   >
                     <X className="w-3.5 h-3.5" />
                     Ahora no
@@ -1398,9 +1398,9 @@ export default function App() {
 
         {/* Confirmación rápida al Coordinador tras habilitar un salón (Opción 1 clic a WhatsApp) */}
         {isAdmin && aprobacionCoordinadorInfo && (
-          <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 text-xs text-slate-800">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <div className="p-3.5 rounded-2xl bg-[#0A0A0A] border border-white/50 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 text-xs text-white">
+              <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
               <span>
                 <strong>{aprobacionCoordinadorInfo.mensaje}</strong> (Ya aparece en su ruta y en su llamado a lista).
               </span>
@@ -1411,7 +1411,7 @@ export default function App() {
                   href={aprobacionCoordinadorInfo.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-xs"
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-bold inline-flex items-center gap-1.5 transition-all"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   Avisarle por WhatsApp que ya quedó listo
@@ -1420,7 +1420,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setAprobacionCoordinadorInfo(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700"
+                className="p-1.5 rounded-lg text-neutral-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1430,10 +1430,10 @@ export default function App() {
 
         {/* Aviso automático en vivo al Auditor cuando el Coordinador le aprueba el salón */}
         {!isAdmin && avisoSalonHabilitadoAuditor && (
-          <div className="p-4 rounded-2xl bg-white border-2 border-emerald-500 shadow-md flex flex-wrap items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-[#0A0A0A] border-2 border-white flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <p className="text-xs sm:text-sm font-bold text-slate-900">
+              <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
+              <p className="text-xs sm:text-sm font-bold text-white">
                 {avisoSalonHabilitadoAuditor.mensaje}
               </p>
             </div>
@@ -1446,7 +1446,7 @@ export default function App() {
                   handleReclamarSalon(s);
                   setVistaSeccion('lista');
                 }}
-                className="px-3.5 py-1.5 rounded-xl bg-[#005FB8] hover:bg-[#004C94] text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-bold inline-flex items-center gap-1.5"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 Iniciar llamado ahora
@@ -1454,7 +1454,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setAvisoSalonHabilitadoAuditor(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700"
+                className="p-1.5 rounded-lg text-neutral-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1463,14 +1463,14 @@ export default function App() {
         )}
 
         {apiError && (
-          <div className="p-3.5 rounded-2xl bg-white border border-rose-200 shadow-sm flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-[#0A0A0A] border border-[#404040] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-              <span className="text-xs text-rose-800">{apiError}</span>
+              <AlertCircle className="w-4 h-4 text-white shrink-0" />
+              <span className="text-xs text-neutral-300">{apiError}</span>
             </div>
             <button
               onClick={() => fetchDatos()}
-              className="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors"
+              className="px-3 py-1 rounded-lg bg-white text-[#000000] text-xs font-bold"
             >
               Reintentar
             </button>
@@ -1479,11 +1479,11 @@ export default function App() {
 
         {/* Aviso compacto de Corte Histórico Cerrado */}
         {isCorteCerrado && corteActualObj && (
-          <div className="px-4 py-3 rounded-2xl bg-white border border-amber-200 shadow-sm flex items-center justify-between gap-3">
+          <div className="px-4 py-3 rounded-2xl bg-[#0A0A0A] border border-[#333333] flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <Lock className="w-4 h-4 text-amber-600 shrink-0" />
-              <span className="text-xs text-slate-700">
-                <strong className="text-slate-900">{corteActualObj.nombre}</strong> (Solo lectura)
+              <Lock className="w-4 h-4 text-white shrink-0" />
+              <span className="text-xs text-neutral-300">
+                <strong className="text-white">{corteActualObj.nombre}</strong> (Solo lectura)
               </span>
             </div>
             {cortes.some((c) => c.activo) && (
@@ -1493,7 +1493,7 @@ export default function App() {
                   const act = cortes.find((c) => c.activo);
                   if (act) setCorteSeleccionadoId(act.id);
                 }}
-                className="px-3 py-1.5 rounded-xl bg-[#005FB8] hover:bg-[#004C94] text-white text-xs font-bold shrink-0 shadow-xs"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-bold shrink-0"
               >
                 Ir al corte activo
               </button>
@@ -1503,10 +1503,10 @@ export default function App() {
 
         {/* Ruta Asignada de Hoy */}
         {misSalonesRuta.length > 0 && (
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-[#0A0A0A] border border-[#333333] rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <Route className="w-4 h-4 text-[#005FB8] shrink-0" />
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
+              <Route className="w-4 h-4 text-white shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-white">
                 Mi Ruta
               </span>
             </div>
@@ -1521,8 +1521,8 @@ export default function App() {
                     onClick={() => handleSelectSalon(s)}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
                       active
-                        ? 'bg-[#005FB8] text-white border-[#005FB8] shadow-xs'
-                        : 'bg-[#F8F8F8] text-slate-700 border-slate-200 hover:border-slate-400'
+                        ? 'bg-white text-[#000000] border-white'
+                        : 'bg-[#000000] text-neutral-200 border-[#333333] hover:border-white'
                     }`}
                   >
                     {formatGrado(s.grado)} {s.grupo}
@@ -1538,17 +1538,17 @@ export default function App() {
            ===================================================================== */}
         {(vistaSeccion === 'todas' || vistaSeccion === 'resumen') && (
           <section className="space-y-5">
-            <div className="pb-3 border-b border-slate-200 flex items-center justify-between gap-3">
+            <div className="pb-3 border-b border-[#262626] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <span className="px-2 py-0.5 rounded-md bg-[#005FB8] text-white font-mono text-[11px] sm:text-xs font-extrabold tracking-wider shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-white text-[#000000] font-mono text-[11px] sm:text-xs font-extrabold tracking-wider">
                   01
                 </span>
-                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-900">
+                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
                   {isAdmin
                     ? 'Centro de Control y Bitácora en Tiempo Real'
                     : 'Mi Avance de Ruta y Resumen Personal'}
                 </h2>
-                <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold uppercase text-slate-600 shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-[#141414] border border-[#262626] text-[10px] font-bold uppercase text-neutral-300">
                   {isAdmin ? 'Coordinación Global' : 'Exclusivo Mi Ruta'}
                 </span>
               </div>
@@ -1557,7 +1557,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setSeccionResumenAbierta(!seccionResumenAbierta)}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-slate-100 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 transition-colors shadow-xs"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-xs font-semibold text-neutral-300 hover:text-white border border-[#262626] transition-colors"
                 >
                   <span>{seccionResumenAbierta ? 'Ocultar' : 'Mostrar'}</span>
                   {seccionResumenAbierta ? (
@@ -1588,38 +1588,38 @@ export default function App() {
            ===================================================================== */}
         {(vistaSeccion === 'todas' || vistaSeccion === 'salones') && (
           <section className="space-y-5">
-            <div className="pb-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div className="pb-3 border-b border-[#262626] flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <span className="px-2 py-0.5 rounded-md bg-[#005FB8] text-white font-mono text-[11px] sm:text-xs font-extrabold tracking-wider shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-white text-[#000000] font-mono text-[11px] sm:text-xs font-extrabold tracking-wider">
                   02
                 </span>
-                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-900">
+                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
                   Mapa de Salones
                 </h2>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 <div className="hidden sm:flex items-center gap-1.5 text-[11px]">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-700 border border-slate-200 font-medium shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0A0A0A] text-white border border-[#262626] font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white" />
                     Libres
                   </span>
                   {solicitadosCount > 0 && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-300 font-bold shadow-xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-[#000000] border border-white font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#000000] animate-ping" />
                       Solicitados
                     </span>
                   )}
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-600 border border-slate-200 font-medium shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0A0A0A] text-neutral-300 border border-[#262626] font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                     Asignados
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-[#005FB8] border border-blue-200 font-medium shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#005FB8] animate-pulse" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#171717] text-white border border-white/40 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                     En curso
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0A0A0A] text-neutral-400 border border-[#262626] font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
                     Cerrados
                   </span>
                 </div>
@@ -1628,7 +1628,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setSeccionSalonesAbierta(!seccionSalonesAbierta)}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-slate-100 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 transition-colors shadow-xs"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-xs font-semibold text-neutral-300 hover:text-white border border-[#262626] transition-colors"
                   >
                     <span>{seccionSalonesAbierta ? 'Ocultar' : 'Mostrar'}</span>
                     {seccionSalonesAbierta ? (
@@ -1643,12 +1643,12 @@ export default function App() {
 
             {(seccionSalonesAbierta || vistaSeccion === 'salones') && (
               salones.length === 0 ? (
-                <div className="py-10 px-4 text-center border border-dashed border-slate-300 rounded-2xl bg-white shadow-xs">
-                  <DoorOpen className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                  <p className="text-xs font-semibold text-slate-900">
+                <div className="py-10 px-4 text-center border border-dashed border-[#262626] rounded-2xl bg-[#0A0A0A]">
+                  <DoorOpen className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                  <p className="text-xs font-semibold text-white">
                     Aún no hay salones registrados en este corte
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-1 max-w-md mx-auto">
+                  <p className="text-[11px] text-neutral-400 mt-1 max-w-md mx-auto">
                     {isAdmin
                       ? 'Importa el padrón escolar en Excel (.xlsx) para generar los salones y grupos automáticamente.'
                       : 'El coordinador aún no ha cargado salones para este periodo.'}
@@ -1657,7 +1657,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setIsUploadOpen(true)}
-                      className="mt-3 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#005FB8] hover:bg-[#004C94] text-white inline-flex items-center gap-1.5 shadow-xs transition-colors"
+                      className="mt-3 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-neutral-200 text-[#000000] inline-flex items-center gap-1.5"
                     >
                       <Upload className="w-3.5 h-3.5" />
                       Importar Excel
@@ -1696,36 +1696,36 @@ export default function App() {
         {(vistaSeccion === 'todas' || vistaSeccion === 'lista') && (
           <section className="space-y-4">
             {/* Cabecera limpia con línea divisoria */}
-            <div className="pb-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div className="pb-3 border-b border-[#262626] flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <span className="px-2 py-0.5 rounded-md bg-[#005FB8] text-white font-mono text-[11px] sm:text-xs font-extrabold tracking-wider shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-white text-[#000000] font-mono text-[11px] sm:text-xs font-extrabold tracking-wider">
                   03
                 </span>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-900">
+                  <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
                     Llamado a Lista
                   </h2>
                   {!isAdmin && (
-                    <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold uppercase text-slate-600 shadow-xs">
+                    <span className="px-2 py-0.5 rounded-md bg-[#141414] border border-[#262626] text-[10px] font-bold uppercase text-neutral-300">
                       Exclusivo Mi Ruta
                     </span>
                   )}
                   {sede && (
-                    <span className="px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-xs font-semibold text-[#005FB8]">
+                    <span className="px-2.5 py-0.5 rounded-md bg-[#171717] border border-[#333333] text-xs font-semibold text-white">
                       {sede} {grado ? formatGrado(grado) : ''} {grupo || ''}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 text-xs text-slate-600">
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Listos: <strong className="text-slate-900">{totalAuditados}</strong>
+              <div className="flex items-center gap-2.5 text-xs text-neutral-400">
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0A0A0A] border border-[#262626]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                  Listos: <strong className="text-white">{totalAuditados}</strong>
                 </span>
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                  Pendientes: <strong className="text-slate-900">{totalPendientes}</strong>
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0A0A0A] border border-[#262626]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                  Pendientes: <strong className="text-white">{totalPendientes}</strong>
                 </span>
               </div>
             </div>
@@ -1738,7 +1738,7 @@ export default function App() {
                   <select
                     value={sede}
                     onChange={(e) => handleSedeChange(e.target.value)}
-                    className="w-full h-10 bg-white border border-slate-200 focus:border-[#005FB8] rounded-xl px-3.5 text-xs text-slate-900 focus:outline-none transition-colors shadow-xs"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="">
                       {isAdmin ? 'Todas las sedes' : 'Sedes de Mi Ruta'}
@@ -1756,7 +1756,7 @@ export default function App() {
                   <select
                     value={grado}
                     onChange={(e) => handleGradoChange(e.target.value)}
-                    className="w-full h-10 bg-white border border-slate-200 focus:border-[#005FB8] rounded-xl px-3.5 text-xs text-slate-900 focus:outline-none transition-colors shadow-xs"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="">
                       {isAdmin ? 'Todos los grados' : 'Grados de Mi Ruta'}
@@ -1774,7 +1774,7 @@ export default function App() {
                   <select
                     value={grupo}
                     onChange={(e) => setGrupo(e.target.value)}
-                    className="w-full h-10 bg-white border border-slate-200 focus:border-[#005FB8] rounded-xl px-3.5 text-xs text-slate-900 focus:outline-none transition-colors shadow-xs"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="">
                       {isAdmin ? 'Todos los grupos' : 'Grupos de Mi Ruta'}
@@ -1820,7 +1820,7 @@ export default function App() {
                     value={buscar}
                     onChange={(e) => setBuscar(e.target.value)}
                     placeholder="Buscar estudiante..."
-                    className="w-full h-10 bg-white border border-slate-200 focus:border-[#005FB8] rounded-xl px-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-colors shadow-xs"
+                    className="w-full h-10 bg-[#0A0A0A] border border-[#262626] focus:border-white rounded-xl px-3.5 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -1829,8 +1829,8 @@ export default function App() {
                   onClick={() => setSoloPendientes(!soloPendientes)}
                   className={`h-10 px-3.5 rounded-xl text-xs font-semibold border flex items-center justify-center transition-all shrink-0 ${
                     soloPendientes
-                      ? 'bg-[#005FB8] text-white border-[#005FB8] shadow-xs'
-                      : 'bg-white text-slate-600 border-slate-200 hover:text-slate-900 shadow-xs'
+                      ? 'bg-white text-[#000000] border-white'
+                      : 'bg-[#0A0A0A] text-neutral-400 border-[#262626] hover:text-white'
                   }`}
                 >
                   <span>Pendientes</span>
@@ -1841,7 +1841,7 @@ export default function App() {
                     type="button"
                     onClick={handleLimpiarFiltros}
                     title="Limpiar filtros"
-                    className="h-10 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 text-xs font-semibold flex items-center justify-center transition-colors shrink-0 shadow-xs"
+                    className="h-10 px-3 rounded-xl bg-[#0A0A0A] hover:bg-[#171717] text-neutral-400 hover:text-white border border-[#262626] text-xs font-semibold flex items-center justify-center transition-colors shrink-0"
                   >
                     <span>Limpiar</span>
                   </button>
@@ -1861,15 +1861,15 @@ export default function App() {
 
             {/* Tabla / Tarjetas de Estudiantes directamente fuera */}
             {estudiantesMostrados.length === 0 ? (
-              <div className="py-12 px-4 text-center border-t border-slate-200 bg-white rounded-2xl shadow-xs">
-                <Users className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-xs font-semibold text-slate-900">
+              <div className="py-12 px-4 text-center border-t border-[#1F1F1F]">
+                <Users className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                <p className="text-xs font-semibold text-white">
                   {!isAdmin && misSalonesRuta.length === 0
                     ? 'Aún no tienes salones activos en Mi Ruta'
                     : 'Sin estudiantes en este filtro'}
                 </p>
                 {!isAdmin && misSalonesRuta.length === 0 && (
-                  <p className="text-[11px] text-slate-500 mt-1">
+                  <p className="text-[11px] text-neutral-400 mt-1">
                     Ve a 02. Salones y toca &ldquo;Solicitar salón&rdquo; en cualquier grupo libre para que el coordinador te lo habilite.
                   </p>
                 )}
@@ -1877,7 +1877,7 @@ export default function App() {
                   {(sede || grado || grupo || buscar || soloPendientes) && (
                     <button
                       onClick={handleLimpiarFiltros}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-xs"
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#141414] hover:bg-[#1F1F1F] text-white border border-[#262626]"
                     >
                       Ver todos
                     </button>
@@ -1885,7 +1885,7 @@ export default function App() {
                   {!isAdmin && misSalonesRuta.length === 0 && (
                     <button
                       onClick={() => setVistaSeccion('salones')}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white shadow-xs"
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000]"
                     >
                       Ir a 02. Salones
                     </button>
@@ -1893,7 +1893,7 @@ export default function App() {
                   {isAdmin && (
                     <button
                       onClick={() => setIsUploadOpen(true)}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#005FB8] hover:bg-[#004C94] text-white shadow-xs"
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-neutral-200 text-[#000000]"
                     >
                       Importar Excel
                     </button>
@@ -1914,10 +1914,10 @@ export default function App() {
                   ))}
                 </div>
 
-                <div className="hidden md:block overflow-x-auto border border-slate-200 rounded-2xl bg-white shadow-xs">
+                <div className="hidden md:block overflow-x-auto border-t border-[#262626]">
                   <table className="w-full text-left border-collapse min-w-[850px]">
                     <thead>
-                      <tr className="bg-[#F8F8F8] border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      <tr className="border-b border-[#262626] text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                         <th className="py-3 px-4">Estudiante</th>
                         <th className="py-3 px-4">Asistió</th>
                         <th className="py-3 px-4">Sigue 2027</th>
@@ -1926,7 +1926,7 @@ export default function App() {
                         <th className="py-3 px-4 text-right">Estado</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody>
                       {estudiantesMostrados.map((est) => (
                         <StudentAuditRow
                           key={est.id}
@@ -1947,19 +1947,19 @@ export default function App() {
 
       {/* MODAL DE CONFIRMACIÓN DUAL AL AUDITOR TRAS SOLICITAR SALÓN */}
       {solicitudEnviadaInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#0A0A0A] border border-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <span className="w-9 h-9 rounded-xl bg-blue-50 text-[#005FB8] font-bold flex items-center justify-center shrink-0 border border-blue-200">
+                <span className="w-9 h-9 rounded-xl bg-white text-[#000000] font-bold flex items-center justify-center shrink-0">
                   <Hand className="w-4 h-4" />
                 </span>
                 <div>
-                  <h3 className="text-sm font-extrabold text-slate-900">
+                  <h3 className="text-sm font-extrabold text-white">
                     Salón {formatGrado(solicitudEnviadaInfo.salon.grado)}{' '}
                     {solicitudEnviadaInfo.salon.grupo} solicitado
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-neutral-400">
                     {solicitudEnviadaInfo.salon.sede}
                   </p>
                 </div>
@@ -1967,17 +1967,17 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setSolicitudEnviadaInfo(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700"
+                className="p-1.5 rounded-lg text-neutral-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-700 leading-relaxed">
-              Solicitud enviada a la app. Toca abajo para avisarle también al WhatsApp del coordinador y que te lo habilite de una vez.
+            <p className="text-xs text-neutral-200 leading-relaxed">
+              ¡Solicitud enviada a la app! Toca abajo para avisarle también al WhatsApp del coordinador y que te lo habilite de una vez.
             </p>
 
-            <div className="p-3 rounded-xl bg-[#F8F8F8] border border-slate-200 text-[11px] text-slate-600 italic">
+            <div className="p-3 rounded-xl bg-[#000000] border border-[#262626] text-[11px] text-neutral-400 italic">
               &ldquo;{solicitudEnviadaInfo.whatsapp_mensaje}&rdquo;
             </div>
 
@@ -1987,7 +1987,7 @@ export default function App() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setSolicitudEnviadaInfo(null)}
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all shadow-xs"
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-extrabold flex items-center justify-center gap-2 transition-all"
               >
                 <MessageCircle className="w-4 h-4" />
                 Avisar por WhatsApp al Coordinador
@@ -1995,7 +1995,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setSolicitudEnviadaInfo(null)}
-                className="w-full py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200"
+                className="w-full py-2 px-3 rounded-xl bg-[#141414] hover:bg-[#1F1F1F] text-neutral-300 text-xs font-semibold border border-[#262626]"
               >
                 Cerrar (Ya se notificó en la app)
               </button>
