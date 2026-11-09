@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: nexoaula-2027
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /cortes
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NEXO_DB_PATH
+        value: /app/data/nexoaula.db
+      - key: NEXO_SECRET_KEY
+        generateValue: true
+      - key: NEXO_LLAVE_MAESTRA
+        value: NEXO-RECTORIA-2027
+    disk:
+      name: nexoaula-data
+      mountPath: /app/data
+      sizeGB: 1

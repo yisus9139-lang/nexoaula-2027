@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --bg-canvas: #000000;
+    --bg-elevated: #0A0A0A;
+    --bg-interactive: #141414;
+    --border-subtle: #1F1F1F;
+    --border-default: #262626;
+    --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: #FFFFFF;
+    color-scheme: dark;
+    font-family: 'Plus Jakarta Sans', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  table,
+  td,
+  th,
+  input[type='tel'],
+  input[inputmode='numeric'] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  button:not(:disabled) {
+    transition:
+      transform 160ms var(--ease-spring),
+      background-color 180ms var(--ease-spring),
+      border-color 180ms var(--ease-spring),
+      color 180ms var(--ease-spring);
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  select:focus-visible,
+  input:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 220ms var(--ease-editorial) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom sleek monochrome scrollbar for dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}
