@@ -2015,6 +2015,7 @@ export default function App() {
       <UploadExcelModal
         isOpen={isUploadOpen && isAdmin}
         currentUser={currentUser}
+        apiBase={API_BASE}
         onClose={() => setIsUploadOpen(false)}
         onSuccess={(msg) => {
           showToast(msg);

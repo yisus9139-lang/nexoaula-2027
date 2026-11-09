@@ -8,12 +8,20 @@ import {
   Loader2,
 } from 'lucide-react';
 
-export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUser }) {
+export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUser, apiBase }) {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [resultMsg, setResultMsg] = useState('');
   const fileInputRef = useRef(null);
+
+  const finalApiBase =
+    apiBase ||
+    import.meta.env.VITE_API_URL ||
+    (typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:8000'
+      : '');
 
   if (!isOpen) return null;
 
@@ -53,7 +61,7 @@ export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUs
         reqHeaders['X-Session-Token'] = String(currentUser.session_token);
       }
 
-      const response = await fetch('http://localhost:8000/upload-excel', {
+      const response = await fetch(`${finalApiBase}/upload-excel`, {
         method: 'POST',
         headers: reqHeaders,
         body: formData,
