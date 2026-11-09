@@ -8,12 +8,14 @@ export default {
     extend: {
       colors: {
         nexo: {
-          bg: "#000000",
-          card: "#0A0A0A",
-          surface: "#141414",
-          border: "#262626",
-          accent: "#FFFFFF",
-          muted: "#737373",
+          canvas: "#F8F8F8",
+          card: "#FFFFFF",
+          surface: "#F1F5F9",
+          border: "#E2E8F0",
+          primary: "#005FB8",
+          primaryHover: "#004C94",
+          text: "#0F172A",
+          muted: "#64748B",
         }
       },
       fontFamily: {

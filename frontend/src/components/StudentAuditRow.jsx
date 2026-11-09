@@ -149,42 +149,42 @@ export default function StudentAuditRow({
 
   return (
     <tr
-      className={`border-b border-[#1F1F1F]/90 transition-colors duration-150 ${
+      className={`border-b border-slate-100 transition-colors duration-150 ${
         isCompleto
-          ? 'bg-[#0A0A0A]/90 hover:bg-[#121212]'
-          : 'hover:bg-[#121212]/60'
+          ? 'bg-slate-50/70 hover:bg-slate-100/80'
+          : 'bg-white hover:bg-slate-50'
       }`}
     >
       {/* 1. Estudiante & Salón */}
       <td className="py-3 px-4">
         <div className="flex flex-col">
-          <span className="font-semibold text-white text-sm">
+          <span className="font-semibold text-slate-900 text-sm">
             {estudiante.apellidos}, {estudiante.nombres}
           </span>
           <div className="flex flex-wrap items-center gap-1.5 mt-1">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#141414] text-neutral-300 border border-[#262626]">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
               {estudiante.sede}
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#1F1F1F] text-white border border-[#333333]">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-800 border border-slate-300">
               {formatGrado(estudiante.grado)} {estudiante.grupo}
             </span>
             {audit.auditado_por_nombre && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#000000] text-neutral-400 border border-[#262626]">
-                <ShieldCheck className="w-3 h-3 text-neutral-300" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-200">
+                <ShieldCheck className="w-3 h-3 text-slate-500" />
                 {audit.auditado_por_nombre}
               </span>
             )}
             {tienePrevio && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#000000] text-neutral-400 border border-[#262626]">
-                <History className="w-3 h-3 text-neutral-400" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-200">
+                <History className="w-3 h-3 text-slate-400" />
                 {estudiante.nombre_corte_anterior || 'Anterior'}:{' '}
-                <strong className="text-white">
+                <strong className="text-slate-900 font-bold">
                   {estudiante.continua_corte_anterior ? 'Sí' : 'No'}
                 </strong>
               </span>
             )}
             {cambioOpinion && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-white text-[#000000]">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-[#005FB8] border border-blue-200">
                 <ArrowRightLeft className="w-3 h-3" />
                 {audit.continua_2027 === false ? 'Cambió a No' : 'Recuperado'}
               </span>
@@ -195,15 +195,15 @@ export default function StudentAuditRow({
 
       {/* 2. Asistencia Hoy */}
       <td className="py-3 px-4">
-        <div className="inline-flex items-center p-1 rounded-xl bg-[#000000] border border-[#262626]">
+        <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 shadow-xs">
           <button
             type="button"
             disabled={readOnly}
             onClick={() => handleToggleAsistencia(true)}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               audit.asistio === true
-                ? 'bg-white text-[#000000]'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-[#005FB8] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             } ${readOnly ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             <Check className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -215,8 +215,8 @@ export default function StudentAuditRow({
             onClick={() => handleToggleAsistencia(false)}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               isCompleto && audit.asistio === false
-                ? 'bg-[#262626] text-white border border-[#404040]'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             } ${readOnly ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             <X className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -227,15 +227,15 @@ export default function StudentAuditRow({
 
       {/* 3. ¿Continúa en 2027? */}
       <td className="py-3 px-4">
-        <div className="inline-flex items-center p-1 rounded-xl bg-[#000000] border border-[#262626]">
+        <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 shadow-xs">
           <button
             type="button"
             disabled={readOnly}
             onClick={() => handleToggleContinua(true)}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               audit.continua_2027 === true
-                ? 'bg-white text-[#000000]'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-[#005FB8] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             } ${readOnly ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             <Check className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -247,8 +247,8 @@ export default function StudentAuditRow({
             onClick={() => handleToggleContinua(false)}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               audit.continua_2027 === false
-                ? 'bg-[#262626] text-white border border-[#404040]'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             } ${readOnly ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             <X className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -260,16 +260,16 @@ export default function StudentAuditRow({
       {/* 4. Requisitos o Motivo */}
       <td className="py-3 px-4 min-w-[220px]">
         {audit.continua_2027 === null || audit.continua_2027 === undefined ? (
-          <span className="text-xs text-neutral-500">Sin definir</span>
+          <span className="text-xs text-slate-400">Sin definir</span>
         ) : audit.continua_2027 === true ? (
           <select
             disabled={readOnly}
             value={audit.requisitos_matricula || ''}
             onChange={handleSelectRequisito}
-            className={`w-full bg-[#000000] text-xs rounded-xl px-3 py-2 border transition-colors focus:outline-none ${
+            className={`w-full bg-white text-xs rounded-xl px-3 py-2 border transition-colors focus:outline-none focus:border-[#005FB8] shadow-xs ${
               audit.requisitos_matricula
-                ? 'border-white/50 text-white'
-                : 'border-[#404040] text-neutral-300'
+                ? 'border-[#005FB8] text-slate-900 font-medium'
+                : 'border-slate-200 text-slate-700'
             } ${readOnly ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             <option value="">Selecciona requisito...</option>
@@ -284,10 +284,10 @@ export default function StudentAuditRow({
             disabled={readOnly}
             value={audit.motivo_retiro || ''}
             onChange={handleSelectMotivo}
-            className={`w-full bg-[#000000] text-xs rounded-xl px-3 py-2 border transition-colors focus:outline-none ${
+            className={`w-full bg-white text-xs rounded-xl px-3 py-2 border transition-colors focus:outline-none focus:border-[#005FB8] shadow-xs ${
               audit.motivo_retiro
-                ? 'border-neutral-400 text-white'
-                : 'border-[#404040] text-neutral-300'
+                ? 'border-rose-400 text-slate-900 font-medium'
+                : 'border-slate-200 text-slate-700'
             } ${readOnly ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
             <option value="">Motivo de retiro...</option>
@@ -303,7 +303,7 @@ export default function StudentAuditRow({
       {/* 5. Observaciones */}
       <td className="py-3 px-4 min-w-[180px]">
         <div className="relative">
-          <MessageSquare className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <MessageSquare className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             disabled={readOnly}
@@ -314,7 +314,7 @@ export default function StudentAuditRow({
               if (e.key === 'Enter') e.target.blur();
             }}
             placeholder={readOnly ? '—' : 'Nota...'}
-            className={`w-full bg-[#000000] border border-[#262626] focus:border-white rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors ${
+            className={`w-full bg-white border border-slate-200 focus:border-[#005FB8] rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-colors shadow-xs ${
               readOnly ? 'opacity-60 cursor-not-allowed' : ''
             }`}
           />
@@ -324,17 +324,17 @@ export default function StudentAuditRow({
       {/* 6. Estado */}
       <td className="py-3 px-4 text-right whitespace-nowrap">
         {isSaving ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#171717] text-neutral-300 border border-[#333333]">
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#005FB8]" />
             ...
           </span>
         ) : isCompleto ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-white text-[#000000]">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
             <CheckCircle2 className="w-3.5 h-3.5" />
             Listo
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#141414] text-neutral-400 border border-[#262626]">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
             <Clock className="w-3.5 h-3.5" />
             Pendiente
           </span>

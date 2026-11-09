@@ -52,7 +52,7 @@ export default function ClassroomMapGrid({
   const isAdmin = currentUser?.rol === 'ADMIN';
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-[#262626] border border-[#262626] rounded-2xl overflow-hidden">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-slate-200 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
       {salones.map((salon) => {
         const isSelected =
           selectedSalon?.sede === salon.sede &&
@@ -68,36 +68,38 @@ export default function ClassroomMapGrid({
 
         let badgeStyle = '';
         let badgeText = '';
-        let cellBg = 'bg-[#000000] hover:bg-[#080808]';
+        let cellBg = 'bg-white hover:bg-slate-50';
 
         if (salon.estado === 'DISPONIBLE') {
-          badgeStyle = 'bg-[#141414] text-white border-[#333333]';
+          badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
           badgeText = 'Libre';
-          if (isSelected) cellBg = 'bg-[#0A0A0A] ring-1 ring-inset ring-white/50';
+          if (isSelected) cellBg = 'bg-blue-50/30 ring-2 ring-inset ring-[#005FB8]';
         } else if (salon.estado === 'SOLICITADO') {
-          badgeStyle = 'bg-white text-[#000000] border-white';
+          badgeStyle = 'bg-amber-50 text-amber-800 border-amber-300';
           badgeText = 'Solicitado';
-          cellBg = 'bg-[#0A0A0A] ring-1 ring-inset ring-white/60';
+          cellBg = isSelected
+            ? 'bg-amber-50/40 ring-2 ring-inset ring-amber-500'
+            : 'bg-white hover:bg-slate-50';
         } else if (salon.estado === 'ASIGNADO') {
           badgeStyle = isMine
-            ? 'bg-white text-[#000000] border-white'
-            : 'bg-[#171717] text-neutral-300 border-[#333333]';
+            ? 'bg-blue-50 text-[#005FB8] border-blue-200 font-bold'
+            : 'bg-slate-100 text-slate-700 border-slate-200';
           badgeText = isMine
             ? 'Tu ruta'
             : salon.funcionario_nombre || 'Asignado';
           if (isSelected || isMine)
-            cellBg = 'bg-[#080808] ring-1 ring-inset ring-white/30';
+            cellBg = 'bg-blue-50/20 ring-2 ring-inset ring-[#005FB8]';
         } else if (salon.estado === 'EN_AUDITORIA') {
-          badgeStyle = 'bg-white text-[#000000] border-white';
+          badgeStyle = 'bg-[#005FB8] text-white border-[#005FB8]';
           badgeText = isMine
             ? 'Auditando (Tú)'
             : salon.funcionario_nombre || 'En curso';
-          if (isSelected) cellBg = 'bg-[#0A0A0A] ring-1 ring-inset ring-white/60';
+          if (isSelected) cellBg = 'bg-blue-50/30 ring-2 ring-inset ring-[#005FB8]';
         } else {
-          badgeStyle = 'bg-[#121212] text-neutral-400 border-[#262626]';
+          badgeStyle = 'bg-emerald-50 text-emerald-700 border-emerald-200';
           badgeText = 'Cerrado';
           if (isSelected)
-            cellBg = 'bg-[#0A0A0A] ring-1 ring-inset ring-neutral-400/40';
+            cellBg = 'bg-emerald-50/30 ring-2 ring-inset ring-emerald-600';
         }
 
         const completadosCount =
@@ -118,10 +120,10 @@ export default function ClassroomMapGrid({
             <div>
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 block truncate max-w-[170px]">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 block truncate max-w-[170px]">
                     {salon.sede}
                   </span>
-                  <h4 className="text-base font-extrabold text-white leading-tight font-mono tracking-tight mt-0.5">
+                  <h4 className="text-base font-extrabold text-slate-900 leading-tight font-mono tracking-tight mt-0.5">
                     {formatGrado(salon.grado)} {salon.grupo}
                   </h4>
                 </div>
@@ -148,31 +150,31 @@ export default function ClassroomMapGrid({
               {/* Progreso con física suave */}
               <div className="space-y-1.5 mb-3.5">
                 <div className="flex items-center justify-between text-xs tabular-nums">
-                  <span className="text-neutral-400">Avance</span>
-                  <span className="font-bold font-mono text-white">
+                  <span className="text-slate-500">Avance</span>
+                  <span className="font-bold font-mono text-slate-900">
                     {completadosCount}/{totalCount} • {pctAvance}%
                   </span>
                 </div>
-                <div className="w-full h-1 bg-[#141414] rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-white rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    className="h-full bg-[#005FB8] rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     style={{ width: `${pctAvance}%` }}
                   />
                 </div>
               </div>
 
               {salon.estado === 'SOLICITADO' && salon.solicitado_por_nombre && (
-                <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-[#0A0A0A] border border-[#333333] text-[11px] text-neutral-200 flex items-center gap-1.5">
-                  <Bell className="w-3.5 h-3.5 text-white shrink-0" />
+                <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900 flex items-center gap-1.5">
+                  <Bell className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                   <span className="truncate">
-                    Solicita: <strong className="text-white">{salon.solicitado_por_nombre}</strong>
+                    Solicita: <strong className="text-amber-950 font-bold">{salon.solicitado_por_nombre}</strong>
                   </span>
                 </div>
               )}
             </div>
 
             {/* Acciones */}
-            <div className="pt-2.5 border-t border-[#1F1F1F] flex flex-col gap-1.5">
+            <div className="pt-2.5 border-t border-slate-100 flex flex-col gap-1.5">
               {/* 1. SALÓN LIBRE (DISPONIBLE) */}
               {salon.estado === 'DISPONIBLE' && (
                 <>
@@ -181,7 +183,7 @@ export default function ClassroomMapGrid({
                       type="button"
                       disabled={actionLoading}
                       onClick={() => onReclamarSalon(salon)}
-                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000] transition-all disabled:opacity-50"
+                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white transition-all disabled:opacity-50 shadow-xs"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Iniciar llamado
@@ -191,12 +193,12 @@ export default function ClassroomMapGrid({
                       <button
                         type="button"
                         disabled
-                        className="w-full min-h-[36px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0A0A0A] text-neutral-500 border border-[#262626] cursor-not-allowed"
+                        className="w-full min-h-[36px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
                       >
                         <Hand className="w-3.5 h-3.5" />
                         Solicitar salón
                       </button>
-                      <p className="text-[10px] text-neutral-400 text-center leading-snug">
+                      <p className="text-[10px] text-slate-500 text-center leading-snug">
                         Termina primero tus salones de Mi Ruta para pedir otro
                       </p>
                     </div>
@@ -205,7 +207,7 @@ export default function ClassroomMapGrid({
                       type="button"
                       disabled={actionLoading}
                       onClick={() => onSolicitarSalon && onSolicitarSalon(salon)}
-                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000] transition-all disabled:opacity-50"
+                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white transition-all disabled:opacity-50 shadow-xs"
                     >
                       <Hand className="w-3.5 h-3.5" />
                       <span>Solicitar salón</span>
@@ -225,7 +227,7 @@ export default function ClassroomMapGrid({
                         onClick={() =>
                           onAprobarSolicitud && onAprobarSolicitud(salon)
                         }
-                        className="flex-1 min-h-[38px] flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000] transition-all disabled:opacity-50"
+                        className="flex-1 min-h-[38px] flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white transition-all disabled:opacity-50 shadow-xs"
                       >
                         <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                         Habilitar salón
@@ -236,7 +238,7 @@ export default function ClassroomMapGrid({
                         onClick={() =>
                           onRechazarSolicitud && onRechazarSolicitud(salon)
                         }
-                        className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#141414] hover:bg-[#1F1F1F] text-neutral-300 border border-[#333333] flex items-center justify-center gap-1 transition-all disabled:opacity-50"
+                        className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 flex items-center justify-center gap-1 transition-all disabled:opacity-50 shadow-xs"
                       >
                         <X className="w-3.5 h-3.5" />
                         Ahora no
@@ -251,14 +253,14 @@ export default function ClassroomMapGrid({
                       })}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-[#141414] hover:bg-[#1F1F1F] text-white border border-white/40 transition-all text-center"
+                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-white hover:bg-slate-100 text-[#005FB8] border border-blue-300 transition-all text-center shadow-xs"
                     >
                       <Clock className="w-3.5 h-3.5 shrink-0" />
                       <span>Esperando aprobación</span>
                       <span className="hidden sm:inline">(WhatsApp)</span>
                     </a>
                   ) : (
-                    <div className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0A0A0A] text-neutral-400 border border-[#262626]">
+                    <div className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                       <Clock className="w-3.5 h-3.5 shrink-0" />
                       <span>Solicitado por {salon.solicitado_por_nombre || 'otro auditor'}</span>
                     </div>
@@ -274,14 +276,14 @@ export default function ClassroomMapGrid({
                       type="button"
                       disabled={actionLoading}
                       onClick={() => onReclamarSalon(salon)}
-                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000] transition-all disabled:opacity-50"
+                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white transition-all disabled:opacity-50 shadow-xs"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       Iniciar llamado
                     </button>
                   ) : (
-                    <div className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0A0A0A] text-neutral-500 border border-[#262626]">
-                      <Lock className="w-3.5 h-3.5 text-neutral-500" />
+                    <div className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                      <Lock className="w-3.5 h-3.5 text-slate-500" />
                       En ruta de {salon.funcionario_nombre || 'otro auditor'}
                     </div>
                   )}
@@ -295,7 +297,7 @@ export default function ClassroomMapGrid({
                     <button
                       type="button"
                       onClick={() => onSelectSalon(salon)}
-                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-neutral-200 text-[#000000] transition-all"
+                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#005FB8] hover:bg-[#004C94] text-white transition-all shadow-xs"
                     >
                       <DoorOpen className="w-3.5 h-3.5" />
                       Continuar llamado
@@ -305,7 +307,7 @@ export default function ClassroomMapGrid({
                       <button
                         type="button"
                         onClick={() => onSelectSalon(salon)}
-                        className="flex-1 min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#141414] hover:bg-[#1F1F1F] text-neutral-200 border border-[#262626] transition-all"
+                        className="flex-1 min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition-all shadow-xs"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         Ver
@@ -314,14 +316,14 @@ export default function ClassroomMapGrid({
                         type="button"
                         disabled={actionLoading}
                         onClick={() => onLiberarSalon(salon)}
-                        className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#171717] hover:bg-[#262626] text-neutral-300 border border-[#333333] flex items-center gap-1 transition-all"
+                        className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1 transition-all shadow-xs"
                       >
                         <Unlock className="w-3.5 h-3.5" />
                         Liberar
                       </button>
                     </>
                   ) : (
-                    <div className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0A0A0A] text-neutral-500 border border-[#262626]">
+                    <div className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                       <Lock className="w-3.5 h-3.5" />
                       En curso por {salon.funcionario_nombre || 'otro auditor'}
                     </div>
@@ -336,13 +338,13 @@ export default function ClassroomMapGrid({
                     <button
                       type="button"
                       onClick={() => onSelectSalon(salon)}
-                      className="flex-1 min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#141414] hover:bg-[#1F1F1F] text-neutral-300 border border-[#262626] transition-all"
+                      className="flex-1 min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition-all shadow-xs"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       Ver
                     </button>
                   ) : (
-                    <div className="flex-1 min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0A0A0A] text-neutral-500 border border-[#262626]">
+                    <div className="flex-1 min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Cerrado por {salon.funcionario_nombre || 'auditor'}
                     </div>
@@ -352,7 +354,7 @@ export default function ClassroomMapGrid({
                       type="button"
                       disabled={actionLoading}
                       onClick={() => onLiberarSalon(salon)}
-                      className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#171717] hover:bg-[#262626] text-white border border-[#333333] flex items-center gap-1 transition-all"
+                      className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 flex items-center gap-1 transition-all shadow-xs"
                     >
                       <Unlock className="w-3.5 h-3.5" />
                       Reabrir
