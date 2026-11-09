@@ -78,7 +78,13 @@ export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUs
       setFile(null);
       onSuccess(data.mensaje);
     } catch (err) {
-      setErrorMsg(err.message);
+      if (err.name === 'TypeError' || err.message?.toLowerCase().includes('fetch')) {
+        setErrorMsg(
+          'No se pudo conectar con el servidor. Si el servicio en Render estaba en reposo (plan gratuito), espera unos 30 segundos mientras despierta y vuelve a hacer clic en Subir e Importar Datos.'
+        );
+      } else {
+        setErrorMsg(err.message || 'Error al conectar con el servidor.');
+      }
     } finally {
       setUploading(false);
     }
