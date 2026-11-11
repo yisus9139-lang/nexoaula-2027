@@ -18,20 +18,91 @@ import { formatGrado } from './ClassroomMapGrid';
 
 /**
  * Función utilitaria para armar el enlace directo a WhatsApp Web / App Móvil
- * con la ruta de salones y el PIN del auditor.
+ * con la ruta de salones agrupada por sede, sin redundancias y con estructura visual clara.
  */
 export function generarEnlaceWhatsAppRuta(funcionario, salonesAsignados = []) {
-  const listaSalones =
-    salonesAsignados.length > 0
-      ? salonesAsignados
-          .map((s) => `${formatGrado(s.grado)}${s.grupo} (${s.sede})`)
-          .join(', ')
-      : 'Sin salones pre-asignados aún (puedes tomar cualquier salón disponible)';
+  const urlApp =
+    typeof window !== 'undefined' && window.location.origin
+      ? window.location.origin
+      : 'https://nexoaula-2027.onrender.com';
 
-  const urlApp = window.location.origin;
-  const mensaje = `Hola ${funcionario.nombre}, tu ruta de auditoría en NexoAula 2027 hoy es: ${listaSalones}. Tu PIN de ingreso rápido es: *${funcionario.pin_acceso}*. Entra aquí: ${urlApp}`;
+  const nombre = funcionario?.nombre || 'Auditor';
+  const pin = funcionario?.pin_acceso || '—';
 
-  const telefonoLimpio = (funcionario.telefono || '').replace(/\D/g, '');
+  let cuerpoSalones = '';
+
+  if (!salonesAsignados || salonesAsignados.length === 0) {
+    cuerpoSalones = [
+      `*Salones asignados:*`,
+      `Aún no tienes salones pre-asignados en tu ruta. Puedes ingresar a la app y tomar cualquier salón libre en el mapa.`,
+    ].join('\n');
+  } else {
+    // Agrupar salones por sede para eliminar redundancia
+    const salonesPorSede = {};
+    salonesAsignados.forEach((s) => {
+      const sedeKey = (s.sede || 'Sede Principal').trim();
+      if (!salonesPorSede[sedeKey]) {
+        salonesPorSede[sedeKey] = [];
+      }
+      salonesPorSede[sedeKey].push(s);
+    });
+
+    const sedes = Object.keys(salonesPorSede);
+    const totalSalones = salonesAsignados.length;
+
+    if (sedes.length === 1) {
+      const sedeUnica = sedes[0];
+      const lista = salonesPorSede[sedeUnica]
+        .map((s) => {
+          const grado = formatGrado(s.grado);
+          const grupoLimpio = String(s.grupo || '').replace(/^-/, '').trim();
+          return `• Grado ${grado} — Grupo ${grupoLimpio}`;
+        })
+        .join('\n');
+
+      cuerpoSalones = [
+        `*Sede:* ${sedeUnica}`,
+        `*Salones asignados (${totalSalones}):*`,
+        lista,
+      ].join('\n');
+    } else {
+      const bloques = sedes
+        .map((sede) => {
+          const lista = salonesPorSede[sede]
+            .map((s) => {
+              const grado = formatGrado(s.grado);
+              const grupoLimpio = String(s.grupo || '').replace(/^-/, '').trim();
+              return `  • Grado ${grado} — Grupo ${grupoLimpio}`;
+            })
+            .join('\n');
+
+          return `*Sede:* ${sede} (${salonesPorSede[sede].length} salones)\n${lista}`;
+        })
+        .join('\n\n');
+
+      cuerpoSalones = [
+        `*Total salones asignados:* ${totalSalones}`,
+        ``,
+        bloques,
+      ].join('\n');
+    }
+  }
+
+  const mensaje = [
+    `*NexoAula 2027 | Ruta de Auditoría*`,
+    ``,
+    `Hola *${nombre}*, aquí tienes la información para tu jornada de auditoría hoy:`,
+    ``,
+    cuerpoSalones,
+    ``,
+    `*PIN de ingreso rápido:* *${pin}*`,
+    `*Enlace de acceso:*`,
+    `${urlApp}`,
+    ``,
+    `_Ingresa con tu PIN desde el celular para iniciar el llamado a lista en cada aula._`,
+  ].join('\n');
+
+  const telefonoLimpio = String(funcionario?.telefono || '').replace(/\D/g, '');
   const baseWa = telefonoLimpio
     ? `https://wa.me/${telefonoLimpio}`
     : 'https://wa.me/';

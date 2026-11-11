@@ -1555,11 +1555,14 @@ def solicitar_salon_adicional(
     )
 
     grado_fmt = _formatear_grado(salon.grado)
+    grupo_limpio = str(salon.grupo or "").lstrip("-").strip()
     mensaje_wa = (
-        f"¡Hola, Coordinador! Soy {auditor.nombre}. "
-        f"Ya terminé mi ruta inicial en NexoAula 2027 y acabo de solicitar en la app "
-        f"el salón {grado_fmt} {salon.grupo} ({salon.sede}) para seguir apoyando. "
-        f"¿Me lo apruebas por favor?"
+        f"*NexoAula 2027 | Solicitud de Salón*\n\n"
+        f"Hola, Coordinación. Soy *{auditor.nombre}*.\n"
+        f"Ya finalicé mi ruta asignada y solicito la habilitación de un nuevo salón para continuar apoyando:\n\n"
+        f"• *Sede:* {salon.sede}\n"
+        f"• *Aula:* Grado {grado_fmt} — Grupo {grupo_limpio}\n\n"
+        f"¿Me lo apruebas en la plataforma por favor?"
     )
 
     return {
@@ -1607,10 +1610,14 @@ def aprobar_solicitud_salon(
     db.refresh(salon)
 
     grado_fmt = _formatear_grado(salon.grado)
+    grupo_limpio = str(salon.grupo or "").lstrip("-").strip()
     tel_auditor = re.sub(r"\D", "", auditor.telefono or "")
     msg_confirmacion = (
-        f"¡Listo, {auditor.nombre}! Ya te habilité {grado_fmt} {salon.grupo} ({salon.sede}) "
-        f"en NexoAula 2027. Ya aparece en Mi Ruta para que llames asistencia."
+        f"*NexoAula 2027 | Salón Habilitado*\n\n"
+        f"¡Listo, *{auditor.nombre}*! Ya te habilité el salón solicitado:\n\n"
+        f"• *Sede:* {salon.sede}\n"
+        f"• *Aula:* Grado {grado_fmt} — Grupo {grupo_limpio}\n\n"
+        f"Ya aparece en Mi Ruta dentro de NexoAula 2027 para que llames asistencia."
     )
 
     return {

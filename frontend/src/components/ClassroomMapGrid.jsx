@@ -25,7 +25,18 @@ export function armarUrlWhatsAppSolicitud({
   telefonoCoordinador,
 }) {
   const gradoFmt = formatGrado(salon.grado);
-  const mensaje = `¡Hola, Coordinador! Soy ${auditorNombre}. Ya terminé mi ruta inicial en NexoAula 2027 y acabo de solicitar en la app el salón ${gradoFmt} ${salon.grupo} (${salon.sede}) para seguir apoyando. ¿Me lo apruebas por favor?`;
+  const grupoLimpio = String(salon.grupo || '').replace(/^-/, '').trim();
+  const mensaje = [
+    `*NexoAula 2027 | Solicitud de Salón*`,
+    ``,
+    `Hola, Coordinación. Soy *${auditorNombre}*.`,
+    `Ya finalicé mi ruta asignada y solicito la habilitación de un nuevo salón para continuar apoyando:`,
+    ``,
+    `*Sede:* ${salon.sede}`,
+    `*Aula:* Grado ${gradoFmt} — Grupo ${grupoLimpio}`,
+    ``,
+    `¿Me lo apruebas en la plataforma por favor?`,
+  ].join('\n');
   const telLimpio = String(telefonoCoordinador || '').replace(/\D/g, '');
   const baseWa = telLimpio ? `https://wa.me/${telLimpio}` : 'https://wa.me/';
   return `${baseWa}?text=${encodeURIComponent(mensaje)}`;

@@ -1,19 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import {
-  Users,
-  UserCheck,
-  TrendingUp,
-  UserMinus,
-  ClipboardCheck,
-  AlertTriangle,
-  History,
-  Activity,
-  MapPin,
-  Clock,
-  Route,
-  ArrowUpRight,
-  RotateCcw,
-} from 'lucide-react';
 import { formatGrado } from './ClassroomMapGrid';
 
 export default function KpiAndCharts({
@@ -139,28 +124,24 @@ export default function KpiAndCharts({
           salonesEnCurso > 0
             ? `${salonesEnCurso} en llamado activo`
             : 'Salones asignados hoy',
-        icon: Route,
       },
       {
         id: 'avance-ruta',
         label: 'Avance de Mi Ruta',
         value: `${pctAvance}%`,
         subtitle: `${auditados} de ${totalEstudiantes} alumnos listos`,
-        icon: Users,
       },
       {
         id: 'asistencia-ruta',
         label: 'Asistencia en Mi Ruta',
         value: `${pctAsistencia}%`,
         subtitle: `${presentes} presentes hoy`,
-        icon: UserCheck,
       },
       {
         id: 'continuan-ruta',
         label: 'Siguen 2027 (Mi Ruta)',
         value: continuan,
         subtitle: `${retiros} retiros • ${pendientes} pendientes`,
-        icon: TrendingUp,
       },
     ];
 
@@ -169,7 +150,6 @@ export default function KpiAndCharts({
         {/* Franja de KPIs Personales del Auditor */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#262626] border border-[#262626] rounded-2xl overflow-hidden">
           {kpisAuditor.map((kpi) => {
-            const Icon = kpi.icon;
             return (
               <div
                 key={kpi.id}
@@ -179,7 +159,6 @@ export default function KpiAndCharts({
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
                     {kpi.label}
                   </span>
-                  <Icon className="w-4 h-4 text-neutral-400" />
                 </div>
                 {loading ? (
                   <div className="h-8 w-20 bg-[#171717] animate-pulse rounded-lg" />
@@ -199,8 +178,7 @@ export default function KpiAndCharts({
         {/* Tabla / Tarjetas de Hoja de Ruta Personal del Auditor */}
         <div className="space-y-2.5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-              <Route className="w-3.5 h-3.5 text-white" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
               Estado de Mis Salones Asignados
             </h4>
             <span className="text-[11px] text-neutral-400 tabular-nums">
@@ -288,10 +266,9 @@ export default function KpiAndCharts({
                       <button
                         type="button"
                         onClick={() => onSelectSalon(s)}
-                        className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-bold transition-colors"
+                        className="w-full min-h-[38px] flex items-center justify-center px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-200 text-[#000000] text-xs font-bold transition-colors"
                       >
-                        <span>Ir al llamado a lista</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        Ir al llamado a lista
                       </button>
                     )}
                   </div>
@@ -373,10 +350,9 @@ export default function KpiAndCharts({
                             <button
                               type="button"
                               onClick={() => onSelectSalon(s)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white hover:bg-neutral-200 text-[#000000] text-[11px] font-bold"
+                              className="inline-flex items-center px-2.5 py-1 rounded-lg bg-white hover:bg-neutral-200 text-[#000000] text-[11px] font-bold"
                             >
-                              <span>Ir al llamado</span>
-                              <ArrowUpRight className="w-3.5 h-3.5" />
+                              Ir al llamado
                             </button>
                           )}
                         </td>
@@ -401,28 +377,24 @@ export default function KpiAndCharts({
       label: 'Padrón General',
       value: totalEstudiantes,
       subtitle: `${auditados} auditados (${pctAvance}%)`,
-      icon: Users,
     },
     {
       id: 'asistencia',
       label: 'Asistencia Global',
       value: `${pctAsistencia}%`,
       subtitle: `${presentes} presentes hoy`,
-      icon: UserCheck,
     },
     {
       id: 'proyeccion',
       label: 'Continúan 2027',
       value: continuan,
       subtitle: `${pctContinuan}% del colegio`,
-      icon: TrendingUp,
     },
     {
       id: 'retiros',
       label: 'Retiros Confirmados',
       value: retiros,
       subtitle: `${pendientes} alumnos por auditar`,
-      icon: UserMinus,
     },
   ];
 
@@ -436,7 +408,6 @@ export default function KpiAndCharts({
       {nombreCorteAnterior !== null && variacionAnterior !== null && (
         <div className="bg-[#000000] border border-[#262626] rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <History className="w-4 h-4 text-white shrink-0" />
             <span className="text-xs font-semibold text-neutral-300">
               Comparativa Institucional vs. {nombreCorteAnterior}:
             </span>
@@ -453,7 +424,6 @@ export default function KpiAndCharts({
       {/* 1. Indicadores Clave en Franja Arquitectónica Directa */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#262626] border border-[#262626] rounded-2xl overflow-hidden">
         {kpisAdmin.map((kpi) => {
-          const Icon = kpi.icon;
           return (
             <div
               key={kpi.id}
@@ -463,7 +433,6 @@ export default function KpiAndCharts({
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
                   {kpi.label}
                 </span>
-                <Icon className="w-4 h-4 text-neutral-400" />
               </div>
               {loading ? (
                 <div className="h-8 w-20 bg-[#171717] animate-pulse rounded-lg" />
@@ -484,7 +453,6 @@ export default function KpiAndCharts({
       <div className="space-y-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-white" />
             <h4 className="text-xs font-extrabold uppercase tracking-wider text-white">
               Bitácora de Auditores en Tiempo Real
             </h4>
@@ -571,8 +539,7 @@ export default function KpiAndCharts({
                   <div className="grid grid-cols-2 gap-2 text-xs py-2 px-2.5 rounded-lg bg-[#000000] border border-[#1F1F1F]">
                     <div>
                       <span className="text-[10px] text-neutral-500 block uppercase font-semibold">Ubicación</span>
-                      <span className="font-mono font-bold text-white inline-flex items-center gap-1 truncate max-w-full">
-                        <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
+                      <span className="font-mono font-bold text-white block truncate max-w-full">
                         {u.ubicacion_actual}
                       </span>
                     </div>
@@ -607,10 +574,9 @@ export default function KpiAndCharts({
                     <button
                       type="button"
                       onClick={() => onSelectSalon(u.salon_foco)}
-                      className="w-full min-h-[38px] flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#141414] hover:bg-white text-neutral-200 hover:text-[#000000] border border-[#262626] text-xs font-bold transition-colors"
+                      className="w-full min-h-[38px] flex items-center justify-center px-3 py-1.5 rounded-xl bg-[#141414] hover:bg-white text-neutral-200 hover:text-[#000000] border border-[#262626] text-xs font-bold transition-colors"
                     >
-                      <span>Ver salón en llamado a lista</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      Ver salón en llamado a lista
                     </button>
                   )}
                 </div>
@@ -698,9 +664,9 @@ export default function KpiAndCharts({
                         setFiltroBitSalon('');
                         setFiltroBitSede('');
                       }}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#141414] hover:bg-[#1F1F1F] text-[10px] text-neutral-300 border border-[#262626]"
+                      className="inline-flex items-center px-2 py-1 rounded-lg bg-[#141414] hover:bg-[#1F1F1F] text-[10px] text-neutral-300 border border-[#262626]"
                     >
-                      <RotateCcw className="w-3 h-3" />
+                      Limpiar
                     </button>
                   )}
                 </th>
@@ -743,10 +709,7 @@ export default function KpiAndCharts({
                       </span>
                     </td>
                     <td className="py-2.5 px-3 font-mono font-bold text-white whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
-                        {u.ubicacion_actual}
-                      </span>
+                      <span>{u.ubicacion_actual}</span>
                     </td>
                     <td className="py-2.5 px-3 text-neutral-300">
                       {u.sede_actual}
@@ -776,10 +739,9 @@ export default function KpiAndCharts({
                           type="button"
                           onClick={() => onSelectSalon(u.salon_foco)}
                           title="Ver este salón en 03. Llamado a Lista"
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#141414] hover:bg-white text-neutral-200 hover:text-[#000000] border border-[#262626] text-[11px] font-bold transition-colors"
+                          className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#141414] hover:bg-white text-neutral-200 hover:text-[#000000] border border-[#262626] text-[11px] font-bold transition-colors"
                         >
-                          <span>Ver</span>
-                          <ArrowUpRight className="w-3 h-3" />
+                          Ver
                         </button>
                       ) : (
                         <span className="text-neutral-600">—</span>
@@ -798,8 +760,7 @@ export default function KpiAndCharts({
         {/* Feed cronológico de eventos en vivo */}
         <div className="bg-[#000000] border border-[#262626] rounded-2xl p-4 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-white" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300 mb-3">
               Movimientos Recientes en Vivo
             </h4>
             {bitacoraEventos.length === 0 ? (
@@ -840,8 +801,7 @@ export default function KpiAndCharts({
         {/* 2. Motivos de Retiro */}
         <div className="bg-[#000000] border border-[#262626] rounded-2xl p-4 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-4 h-4 text-white" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300 mb-3">
               Motivos de Retiro
             </h4>
 
@@ -881,8 +841,7 @@ export default function KpiAndCharts({
         {/* 3. Requisitos 2027 */}
         <div className="bg-[#000000] border border-[#262626] rounded-2xl p-4 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-2 mb-3">
-              <ClipboardCheck className="w-4 h-4 text-white" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-300 mb-3">
               Requisitos 2027
             </h4>
 
