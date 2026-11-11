@@ -738,8 +738,13 @@ export default function App() {
       },
       body: JSON.stringify({ ...payload, admin_id: currentUser.id }),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || 'Error al crear el perfil.');
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      // Fallback si la respuesta no es JSON
+    }
+    if (!res.ok) throw new Error(data.detail || `Error al crear el perfil (${res.status}).`);
     await fetchUsuarios();
     return data;
   };
@@ -753,9 +758,14 @@ export default function App() {
       },
       body: JSON.stringify({ ...payload, admin_id: currentUser.id }),
     });
-    const data = await res.json();
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      // Fallback si la respuesta no es JSON
+    }
     if (!res.ok)
-      throw new Error(data.detail || 'Error al actualizar el funcionario.');
+      throw new Error(data.detail || `Error al actualizar el funcionario (${res.status}).`);
     await fetchUsuarios();
     return data;
   };
@@ -768,9 +778,14 @@ export default function App() {
         headers: { 'X-Usuario-Id': String(currentUser.id) },
       }
     );
-    const data = await res.json();
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      // Fallback si la respuesta no es JSON
+    }
     if (!res.ok)
-      throw new Error(data.detail || 'No se pudo eliminar el perfil.');
+      throw new Error(data.detail || `No se pudo eliminar el perfil (${res.status}).`);
     await fetchUsuarios();
     await fetchDatos(true);
     return data;

@@ -23,7 +23,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session, joinedload
 
-from database import SessionLocal, get_db, init_db
+from database import SessionLocal, get_db, init_db, IS_SQLITE
 from models import Auditoria2027, ControlSalon, CorteAuditoria, Estudiante, Usuario
 from schemas import (
     AuditoriaUpdate,
@@ -220,12 +220,31 @@ def generar_usuario_interno(db: Session, nombre: str) -> str:
     return candidato
 
 
+def sincronizar_secuencias_postgres(db: Session):
+    """Sincroniza las secuencias de PostgreSQL para evitar colisiones con IDs pre-insertados."""
+    if IS_SQLITE:
+        return
+    tablas = ["usuarios", "cortes_auditoria", "estudiantes", "control_salones", "auditoria_2027"]
+    for tabla in tablas:
+        try:
+            db.execute(text(f"""
+                SELECT setval(
+                    pg_get_serial_sequence('{tabla}', 'id'),
+                    COALESCE((SELECT MAX(id) FROM {tabla}), 1)
+                );
+            """))
+            db.commit()
+        except Exception:
+            db.rollback()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     db = SessionLocal()
     try:
         seed_database(db, force_reset=False)
+        sincronizar_secuencias_postgres(db)
     finally:
         db.close()
     yield
@@ -964,9 +983,23 @@ def crear_usuario(
         telefono=telefono_limpio,
         rol=rol_limpio,
     )
-    db.add(nuevo)
-    db.commit()
-    db.refresh(nuevo)
+
+    if not IS_SQLITE:
+        max_id = db.query(func.max(Usuario.id)).scalar() or 0
+        nuevo.id = max_id + 1
+
+    try:
+        db.add(nuevo)
+        db.commit()
+        db.refresh(nuevo)
+        if not IS_SQLITE:
+            sincronizar_secuencias_postgres(db)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al registrar usuario en la base de datos: {str(e)}",
+        )
 
     return {
         "mensaje": f"¡Listo! Ya creaste el perfil de {nuevo.nombre}. Comparte su PIN ({nuevo.pin_acceso}) para que entre desde su celular.",
