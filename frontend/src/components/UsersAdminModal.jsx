@@ -13,14 +13,46 @@ import {
   Phone,
   Edit3,
   RotateCcw,
+  Send,
+  Copy,
+  ExternalLink,
+  Share2,
 } from 'lucide-react';
 import { formatGrado } from './ClassroomMapGrid';
 
 /**
- * Función utilitaria para armar el enlace directo a WhatsApp Web / App Móvil
- * con la ruta de salones agrupada por sede, sin redundancias y con estructura visual clara.
+ * Normaliza cualquier número telefónico al formato internacional de WhatsApp Colombia (+57).
+ * Si el usuario escribe 10 dígitos (ej: 3001234567), le añade el 57 automáticamente.
+ * Si ya incluye el 57 o +57, lo limpia y preserva.
  */
-export function generarEnlaceWhatsAppRuta(funcionario, salonesAsignados = []) {
+export function normalizarTelefonoColombia(tel) {
+  if (!tel) return '';
+  const digits = String(tel).replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.length === 10) return `57${digits}`;
+  if (digits.length === 12 && digits.startsWith('57')) return digits;
+  return digits;
+}
+
+/**
+ * Formatea un número telefónico para visualización estética en interfaz (+57 300 123 4567).
+ */
+export function formatTelefonoVisual(tel) {
+  if (!tel) return '—';
+  const digits = String(tel).replace(/\D/g, '');
+  if (digits.length === 12 && digits.startsWith('57')) {
+    return `+57 ${digits.slice(2, 5)} ${digits.slice(5, 8)} ${digits.slice(8)}`;
+  }
+  if (digits.length === 10) {
+    return `+57 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+  }
+  return tel;
+}
+
+/**
+ * Genera el texto formateado en Markdown de la ruta asignada a un auditor.
+ */
+export function generarTextoWhatsAppRuta(funcionario, salonesAsignados = []) {
   const urlApp =
     typeof window !== 'undefined' && window.location.origin
       ? window.location.origin
@@ -88,7 +120,7 @@ export function generarEnlaceWhatsAppRuta(funcionario, salonesAsignados = []) {
     }
   }
 
-  const mensaje = [
+  return [
     `*NexoAula 2027 | Ruta de Auditoría*`,
     ``,
     `Hola *${nombre}*, aquí tienes la información para tu jornada de auditoría hoy:`,
@@ -101,13 +133,65 @@ export function generarEnlaceWhatsAppRuta(funcionario, salonesAsignados = []) {
     ``,
     `_Ingresa con tu PIN desde el celular para iniciar el llamado a lista en cada aula._`,
   ].join('\n');
+}
 
-  const telefonoLimpio = String(funcionario?.telefono || '').replace(/\D/g, '');
+/**
+ * Función utilitaria para armar el enlace directo a WhatsApp Web / App Móvil
+ * con el número normalizado (+57 automático para Colombia).
+ */
+export function generarEnlaceWhatsAppRuta(funcionario, salonesAsignados = []) {
+  const mensaje = generarTextoWhatsAppRuta(funcionario, salonesAsignados);
+  const telefonoLimpio = normalizarTelefonoColombia(funcionario?.telefono);
   const baseWa = telefonoLimpio
     ? `https://wa.me/${telefonoLimpio}`
     : 'https://wa.me/';
 
   return `${baseWa}?text=${encodeURIComponent(mensaje)}`;
+}
+
+/**
+ * Genera un texto consolidado con TODAS las rutas asignadas del día
+ * listo para copiar y enviar en 1 solo clic al grupo general de WhatsApp del equipo.
+ */
+export function generarTextoConsolidadoRutas(auditoresConRuta = [], urlApp = 'https://nexoaula-2027.onrender.com') {
+  if (!auditoresConRuta || auditoresConRuta.length === 0) {
+    return 'No hay rutas asignadas para consolidar.';
+  }
+
+  const bloques = auditoresConRuta.map((item, idx) => {
+    const { funcionario, salones } = item;
+    const pin = funcionario?.pin_acceso || '—';
+    const nombre = funcionario?.nombre || 'Auditor';
+
+    const porSede = {};
+    salones.forEach((s) => {
+      const sede = (s.sede || 'Sede Principal').trim();
+      if (!porSede[sede]) porSede[sede] = [];
+      const grado = formatGrado(s.grado);
+      const grupo = String(s.grupo || '').replace(/^-/, '').trim();
+      porSede[sede].push(`${grado}-${grupo}`);
+    });
+
+    const lineasSedes = Object.entries(porSede).map(
+      ([sede, aulas]) => `  • ${sede}: ${aulas.join(', ')}`
+    ).join('\n');
+
+    return [
+      `*${idx + 1}. ${nombre}* (PIN: *${pin}*)`,
+      lineasSedes || '  • Sin salones asignados',
+    ].join('\n');
+  }).join('\n\n');
+
+  return [
+    `*NexoAula 2027 | Distribución General de Rutas de Auditoría*`,
+    ``,
+    bloques,
+    ``,
+    `*Enlace de acceso a la app:*`,
+    `${urlApp}`,
+    ``,
+    `_Cada auditor debe ingresar con su PIN correspondiente para el llamado a lista._`,
+  ].join('\n');
 }
 
 export default function UsersAdminModal({
@@ -120,10 +204,15 @@ export default function UsersAdminModal({
   onDeleteUsuario,
   onPreasignarSalones,
 }) {
-  const [activeTab, setActiveTab] = useState('perfiles'); // 'perfiles' | 'rutas'
+  const [activeTab, setActiveTab] = useState('perfiles'); // 'perfiles' | 'rutas' | 'masivo'
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Estado para envío masivo y asistido por WhatsApp
+  const [enviadosWa, setEnviadosWa] = useState({});
+  const [copiadoConsolidado, setCopiadoConsolidado] = useState(false);
+  const [copiadoIndividualId, setCopiadoIndividualId] = useState(null);
 
   // Estado para crear nuevo funcionario
   const [nuevoNombre, setNuevoNombre] = useState('');
@@ -277,6 +366,84 @@ export default function UsersAdminModal({
     filtroRutaAuditor,
   ]);
 
+  // Consolidado de auditores que tienen al menos un salón asignado en su ruta
+  const auditoresConRuta = useMemo(() => {
+    return usuarios
+      .filter((u) => u.rol === 'AUDITOR' || u.rol === 'ADMIN')
+      .map((u) => {
+        const salonesDelAuditor = (salones || []).filter(
+          (s) => String(s.funcionario_id) === String(u.id) &&
+                 (s.estado === 'ASIGNADO' || s.estado === 'EN_AUDITORIA')
+        );
+        return {
+          funcionario: u,
+          salones: salonesDelAuditor,
+        };
+      })
+      .filter((item) => item.salones.length > 0);
+  }, [usuarios, salones]);
+
+  const totalSalonesDistribuidos = useMemo(() => {
+    return auditoresConRuta.reduce((acc, a) => acc + a.salones.length, 0);
+  }, [auditoresConRuta]);
+
+  const conTelefonoCount = useMemo(() => {
+    return auditoresConRuta.filter((a) => !!normalizarTelefonoColombia(a.funcionario.telefono)).length;
+  }, [auditoresConRuta]);
+
+  const enviadosCount = useMemo(() => {
+    return auditoresConRuta.filter((a) => !!enviadosWa[a.funcionario.id]).length;
+  }, [auditoresConRuta, enviadosWa]);
+
+  const siguientePendiente = useMemo(() => {
+    return auditoresConRuta.find(
+      (a) => !enviadosWa[a.funcionario.id] && !!normalizarTelefonoColombia(a.funcionario.telefono)
+    );
+  }, [auditoresConRuta, enviadosWa]);
+
+  const marcarComoEnviado = (id) => {
+    setEnviadosWa((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const toggleEnviado = (id) => {
+    setEnviadosWa((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleCopiarConsolidado = async () => {
+    try {
+      const urlApp =
+        typeof window !== 'undefined' && window.location.origin
+          ? window.location.origin
+          : 'https://nexoaula-2027.onrender.com';
+      const texto = generarTextoConsolidadoRutas(auditoresConRuta, urlApp);
+      await navigator.clipboard.writeText(texto);
+      setCopiadoConsolidado(true);
+      setTimeout(() => setCopiadoConsolidado(false), 3000);
+    } catch {
+      setErrorMsg('No se pudo copiar automáticamente. Puedes seleccionar el texto manualmente.');
+    }
+  };
+
+  const handleCopiarIndividual = async (id, texto) => {
+    try {
+      await navigator.clipboard.writeText(texto);
+      setCopiadoIndividualId(id);
+      setTimeout(() => setCopiadoIndividualId(null), 2500);
+    } catch {
+      setErrorMsg('No se pudo copiar al portapapeles.');
+    }
+  };
+
+  const handleAbrirSiguiente = () => {
+    if (!siguientePendiente) return;
+    const enlace = generarEnlaceWhatsAppRuta(
+      siguientePendiente.funcionario,
+      siguientePendiente.salones
+    );
+    window.open(enlace, '_blank');
+    marcarComoEnviado(siguientePendiente.funcionario.id);
+  };
+
   if (!isOpen) return null;
 
   const handleCrearPerfil = async (e) => {
@@ -291,17 +458,18 @@ export default function UsersAdminModal({
 
     setSubmitting(true);
     try {
+      const telNormalizado = normalizarTelefonoColombia(nuevoTelefono.trim());
       await onCreateUsuario({
         nombre: nuevoNombre.trim(),
         pin_acceso: nuevoPin.trim(),
-        telefono: nuevoTelefono.trim() || null,
+        telefono: telNormalizado || null,
         rol: nuevoRol,
       });
       setNuevoNombre('');
       setNuevoPin('');
       setNuevoTelefono('');
       setNuevoRol('AUDITOR');
-      setSuccessMsg('Perfil creado.');
+      setSuccessMsg('Perfil creado exitosamente.');
     } catch (err) {
       setErrorMsg(err.message);
     } finally {
@@ -326,9 +494,10 @@ export default function UsersAdminModal({
     }
     setSubmitting(true);
     try {
+      const telNormalizado = normalizarTelefonoColombia(editTelefono.trim());
       await onUpdateUsuario(usuarioId, {
         pin_acceso: editPin.trim(),
-        telefono: editTelefono.trim() || null,
+        telefono: telNormalizado || null,
       });
       setEditingUserId(null);
       setSuccessMsg('Datos actualizados.');
@@ -471,7 +640,7 @@ export default function UsersAdminModal({
         </div>
 
         {/* Selector de Pestañas */}
-        <div className="px-6 pt-2.5 bg-[#000000] border-b border-[#1F1F1F] flex gap-2">
+        <div className="px-6 pt-2.5 bg-[#000000] border-b border-[#1F1F1F] flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => {
@@ -503,6 +672,27 @@ export default function UsersAdminModal({
           >
             <Route className="w-3.5 h-3.5" />
             2. Asignar Ruta
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('masivo');
+              setErrorMsg('');
+              setSuccessMsg('');
+            }}
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-t-xl border-b-2 transition-all ${
+              activeTab === 'masivo'
+                ? 'border-white text-white bg-[#0A0A0A]'
+                : 'border-transparent text-neutral-400 hover:text-white'
+            }`}
+          >
+            <Send className="w-3.5 h-3.5" />
+            3. Envío Masivo WhatsApp
+            {auditoresConRuta.length > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 rounded-full bg-white text-[#000000] text-[10px] font-black">
+                {auditoresConRuta.length}
+              </span>
+            )}
           </button>
         </div>
 
@@ -570,16 +760,22 @@ export default function UsersAdminModal({
                     />
                   </div>
                   <div className="lg:col-span-3">
-                    <label className="block text-[10px] text-neutral-400 mb-1">
-                      WhatsApp (Opcional)
+                    <label className="block text-[10px] text-neutral-400 mb-1 flex items-center justify-between">
+                      <span>WhatsApp (Opcional)</span>
+                      <span className="text-[9px] text-neutral-500 font-mono">+57 auto</span>
                     </label>
-                    <input
-                      type="tel"
-                      placeholder="573001234567"
-                      value={nuevoTelefono}
-                      onChange={(e) => setNuevoTelefono(e.target.value)}
-                      className="w-full h-9 bg-[#000000] border border-[#262626] focus:border-white rounded-xl px-3 text-xs text-white focus:outline-none"
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-mono font-bold text-neutral-500 select-none">
+                        +57
+                      </span>
+                      <input
+                        type="tel"
+                        placeholder="300 123 4567"
+                        value={nuevoTelefono}
+                        onChange={(e) => setNuevoTelefono(e.target.value)}
+                        className="w-full h-9 bg-[#000000] border border-[#262626] focus:border-white rounded-xl pl-9 pr-3 text-xs text-white focus:outline-none font-mono"
+                      />
+                    </div>
                   </div>
                   <div className="lg:col-span-2">
                     <label className="block text-[10px] text-neutral-400 mb-1">
@@ -749,17 +945,22 @@ export default function UsersAdminModal({
                           {/* WhatsApp */}
                           <td className="py-3 px-2.5 text-neutral-300">
                             {isEditing ? (
-                              <input
-                                type="tel"
-                                value={editTelefono}
-                                onChange={(e) => setEditTelefono(e.target.value)}
-                                placeholder="57300..."
-                                className="w-32 bg-[#000000] border border-white rounded-lg px-2 py-1 text-xs text-white"
-                              />
+                              <div className="relative inline-block">
+                                <span className="absolute left-1.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-neutral-500 select-none">
+                                  +57
+                                </span>
+                                <input
+                                  type="tel"
+                                  value={editTelefono}
+                                  onChange={(e) => setEditTelefono(e.target.value)}
+                                  placeholder="300 123 4567"
+                                  className="w-32 bg-[#000000] border border-white rounded-lg pl-7 pr-1.5 py-1 text-xs text-white font-mono"
+                                />
+                              </div>
                             ) : u.telefono ? (
                               <span className="inline-flex items-center gap-1 text-neutral-300 font-mono text-[11px]">
                                 <Phone className="w-3 h-3 text-neutral-500" />
-                                {u.telefono}
+                                {formatTelefonoVisual(u.telefono)}
                               </span>
                             ) : (
                               <span className="text-neutral-600">—</span>
@@ -837,7 +1038,7 @@ export default function UsersAdminModal({
                 </table>
               </div>
             </>
-          ) : (
+          ) : activeTab === 'rutas' ? (
             /* Pestaña 2: Asignar Ruta de Salones en Tabla con Filtros por Columna */
             <div className="space-y-4">
               <div className="pb-4 border-b border-[#262626] flex flex-col sm:flex-row sm:items-end justify-between gap-3">
@@ -1100,6 +1301,223 @@ export default function UsersAdminModal({
                             </td>
                             <td className="py-2.5 px-2.5 text-neutral-300">
                               {salon.funcionario_nombre || '—'}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            /* Pestaña 3: Envío Masivo WhatsApp */
+            <div className="space-y-5">
+              {/* Tarjeta de Encabezado y Acciones Masivas */}
+              <div className="p-4 rounded-2xl bg-[#000000] border border-[#262626] space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <Send className="w-4 h-4 text-white" />
+                      Envío Masivo de Rutas por WhatsApp
+                    </h4>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">
+                      Distribuye las rutas del día a todos los auditores. El código de país (+57) se añade de forma automática.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleCopiarConsolidado}
+                      disabled={auditoresConRuta.length === 0}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#000000] text-xs font-bold hover:bg-neutral-200 disabled:opacity-40 transition-all shadow-sm"
+                    >
+                      {copiadoConsolidado ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          ¡Consolidado Copiado!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          Copiar Todo para Grupo
+                        </>
+                      )}
+                    </button>
+
+                    {siguientePendiente && (
+                      <button
+                        type="button"
+                        onClick={handleAbrirSiguiente}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1A1A1A] text-white border border-[#3A3A3A] hover:bg-[#252525] text-xs font-bold transition-all"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Abrir Siguiente ({siguientePendiente.funcionario.nombre.split(' ')[0]})
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Métricas del Envío */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-[#1C1C1C]">
+                  <div className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F]">
+                    <span className="text-neutral-500 block text-[10px] uppercase font-bold tracking-wider">
+                      Auditores con Ruta
+                    </span>
+                    <span className="text-white font-mono font-bold text-base">
+                      {auditoresConRuta.length}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F]">
+                    <span className="text-neutral-500 block text-[10px] uppercase font-bold tracking-wider">
+                      Salones Asignados
+                    </span>
+                    <span className="text-white font-mono font-bold text-base">
+                      {totalSalonesDistribuidos}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F]">
+                    <span className="text-neutral-500 block text-[10px] uppercase font-bold tracking-wider">
+                      Con WhatsApp
+                    </span>
+                    <span className="text-white font-mono font-bold text-base">
+                      {conTelefonoCount} / {auditoresConRuta.length}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F]">
+                    <span className="text-neutral-500 block text-[10px] uppercase font-bold tracking-wider">
+                      Chats Abiertos
+                    </span>
+                    <span className="text-white font-mono font-bold text-base">
+                      {enviadosCount} / {auditoresConRuta.length}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tabla de Auditores y Acciones 1 a 1 */}
+              <div className="overflow-x-auto rounded-xl border border-[#262626]">
+                <table className="w-full text-left border-collapse min-w-[700px]">
+                  <thead>
+                    <tr className="bg-[#0A0A0A] border-b border-[#262626] text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                      <th className="py-2.5 px-3 w-28">Estado</th>
+                      <th className="py-2.5 px-3">Auditor</th>
+                      <th className="py-2.5 px-3">PIN</th>
+                      <th className="py-2.5 px-3">WhatsApp (+57)</th>
+                      <th className="py-2.5 px-3">Ruta Asignada</th>
+                      <th className="py-2.5 px-3 text-right">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#1C1C1C] text-xs">
+                    {auditoresConRuta.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="py-10 text-center text-neutral-500 text-xs"
+                        >
+                          Aún no hay auditores con salones asignados en su ruta.
+                          <br />
+                          Ve a la pestaña &ldquo;2. Asignar Ruta&rdquo; para pre-asignar salones.
+                        </td>
+                      </tr>
+                    ) : (
+                      auditoresConRuta.map(({ funcionario, salones: salonesAud }) => {
+                        const estaEnviado = !!enviadosWa[funcionario.id];
+                        const enlaceWa = generarEnlaceWhatsAppRuta(funcionario, salonesAud);
+                        const textoMensaje = generarTextoWhatsAppRuta(funcionario, salonesAud);
+                        const tieneTel = !!normalizarTelefonoColombia(funcionario.telefono);
+
+                        return (
+                          <tr
+                            key={funcionario.id}
+                            className={`transition-colors ${
+                              estaEnviado ? 'bg-[#0E0E0E]' : 'hover:bg-[#121212]'
+                            }`}
+                          >
+                            <td className="py-3 px-3">
+                              <button
+                                type="button"
+                                onClick={() => toggleEnviado(funcionario.id)}
+                                title="Alternar estado de envío"
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-all ${
+                                  estaEnviado
+                                    ? 'bg-white text-[#000000]'
+                                    : 'bg-[#1A1A1A] text-neutral-400 border border-[#333333]'
+                                }`}
+                              >
+                                {estaEnviado && <Check className="w-3 h-3 stroke-[3]" />}
+                                {estaEnviado ? 'Enviado' : 'Pendiente'}
+                              </button>
+                            </td>
+                            <td className="py-3 px-3">
+                              <span className="font-bold text-white block">
+                                {funcionario.nombre}
+                              </span>
+                              <span className="text-[10px] text-neutral-500 font-mono">
+                                @{funcionario.usuario}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3">
+                              <span className="font-mono font-bold text-white bg-[#141414] px-2 py-0.5 rounded border border-[#2B2B2B]">
+                                {funcionario.pin_acceso}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3">
+                              {funcionario.telefono ? (
+                                <span className="font-mono text-neutral-300 text-[11px] block">
+                                  {formatTelefonoVisual(funcionario.telefono)}
+                                </span>
+                              ) : (
+                                <span className="text-[10px] text-neutral-500 italic">
+                                  Sin número (+57 pendiente)
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 max-w-xs">
+                              <span className="text-neutral-300 block font-semibold text-[11px]">
+                                {salonesAud.length} salón{salonesAud.length === 1 ? '' : 'es'}
+                              </span>
+                              <span className="text-[10px] text-neutral-500 line-clamp-1">
+                                {salonesAud.map((s) => `${formatGrado(s.grado)}${s.grupo}`).join(', ')}
+                              </span>
+                            </td>
+                            <td className="py-3 px-3 text-right space-x-1.5 whitespace-nowrap">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleCopiarIndividual(funcionario.id, textoMensaje)
+                                }
+                                title="Copiar texto de este auditor al portapapeles"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#171717] hover:bg-[#222222] text-neutral-300 border border-[#2B2B2B] text-[11px] transition-all"
+                              >
+                                {copiadoIndividualId === funcionario.id ? (
+                                  <>
+                                    <Check className="w-3 h-3 text-white" />
+                                    <span>¡Copiado!</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3" />
+                                    <span>Copiar</span>
+                                  </>
+                                )}
+                              </button>
+
+                              <a
+                                href={enlaceWa}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => marcarComoEnviado(funcionario.id)}
+                                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all shadow-sm ${
+                                  tieneTel
+                                    ? 'bg-white text-[#000000] hover:bg-neutral-200'
+                                    : 'bg-[#1F1F1F] text-neutral-400 border border-[#333333] hover:text-white'
+                                }`}
+                              >
+                                <MessageCircle className="w-3 h-3" />
+                                <span>{tieneTel ? 'WhatsApp' : 'Abrir WA'}</span>
+                              </a>
                             </td>
                           </tr>
                         );

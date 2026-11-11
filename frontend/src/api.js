@@ -129,11 +129,19 @@ export async function recuperarAdminPinApi({ llave_maestra, nuevo_pin }) {
   );
 }
 
+export function normalizarTelefonoColombia(tel) {
+  if (!tel) return "";
+  const digits = String(tel).replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.length === 10) return `57${digits}`;
+  if (digits.length === 12 && digits.startsWith("57")) return digits;
+  return digits;
+}
+
 export function generarEnlaceWhatsAppRuta(funcionario, salonesLista = []) {
   const nombre = funcionario?.nombre || "Auditor";
   const pin = funcionario?.pin_acceso || "—";
-  const telefonoRaw = funcionario?.telefono || "";
-  const telefonoLimpio = String(telefonoRaw).replace(/\D/g, "");
+  const telefonoLimpio = normalizarTelefonoColombia(funcionario?.telefono);
 
   const appUrl =
     typeof window !== "undefined" && window.location.origin

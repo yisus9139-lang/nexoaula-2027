@@ -170,6 +170,22 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
+def normalizar_telefono_colombia(telefono: Optional[str]) -> Optional[str]:
+    """Normaliza números móviles a formato internacional WhatsApp (+57 para Colombia)."""
+    if not telefono:
+        return None
+    digitos = re.sub(r"\D", "", str(telefono).strip())
+    if not digitos:
+        return None
+    # Si tiene 10 dígitos (típico celular colombiano ej: 3001234567) -> anteponer 57
+    if len(digitos) == 10:
+        return f"57{digitos}"
+    # Si ya tiene 12 dígitos y empieza por 57 -> 573001234567
+    if len(digitos) == 12 and digitos.startswith("57"):
+        return digitos
+    return digitos
+
+
 def generar_usuario_interno(db: Session, nombre: str) -> str:
     limpio = (
         nombre.strip()
@@ -895,11 +911,7 @@ def crear_usuario(
 
     nombre_limpio = payload.nombre.strip()
     pin_limpio = payload.pin_acceso.strip()
-    telefono_limpio = (
-        re.sub(r"[^\d+]", "", payload.telefono.strip())
-        if payload.telefono and payload.telefono.strip()
-        else None
-    )
+    telefono_limpio = normalizar_telefono_colombia(payload.telefono)
     rol_limpio = (
         payload.rol.strip().upper()
         if payload.rol and payload.rol.strip().upper() in ("ADMIN", "AUDITOR")
@@ -1013,8 +1025,7 @@ def editar_usuario(
         ).update({"auditado_por_nombre": user.nombre})
 
     if payload.telefono is not None:
-        limpio_tel = re.sub(r"[^\d+]", "", payload.telefono.strip())
-        user.telefono = limpio_tel if limpio_tel else None
+        user.telefono = normalizar_telefono_colombia(payload.telefono)
 
     if payload.rol is not None and payload.rol.strip().upper() in ("ADMIN", "AUDITOR"):
         user.rol = payload.rol.strip().upper()
@@ -1339,7 +1350,8 @@ def _formatear_grado(grado: str) -> str:
 
 
 def _construir_whatsapp_url(telefono: str, mensaje: str) -> str:
-    base_wa = f"https://wa.me/{telefono}" if telefono else "https://wa.me/"
+    tel_norm = normalizar_telefono_colombia(telefono)
+    base_wa = f"https://wa.me/{tel_norm}" if tel_norm else "https://wa.me/"
     return f"{base_wa}?text={quote(mensaje)}"
 
 
