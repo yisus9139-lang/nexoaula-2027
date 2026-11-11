@@ -16,16 +16,31 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 raw_database_url = os.getenv("DATABASE_URL") or os.getenv("NEXO_DATABASE_URL")
 
 if raw_database_url:
-    # Soporte para prefijo postgres:// común en Render, Supabase y Neon
+    # Normalizar prefijo postgres:// común en Render, Supabase y Neon
     if raw_database_url.startswith("postgres://"):
         raw_database_url = raw_database_url.replace("postgres://", "postgresql://", 1)
 
     SQLALCHEMY_DATABASE_URL = raw_database_url
-    engine = create_engine(
-        SQLALCHEMY_DATABASE_URL,
-        pool_pre_ping=True,
-        pool_recycle=300,
-    )
+    try:
+        engine = create_engine(
+            SQLALCHEMY_DATABASE_URL,
+            pool_pre_ping=True,
+            pool_recycle=300,
+        )
+    except ModuleNotFoundError as e:
+        if "psycopg" in str(e).lower():
+            # Si el dialecto por defecto buscó psycopg (v3) pero está instalado psycopg2
+            if "postgresql+psycopg://" in SQLALCHEMY_DATABASE_URL:
+                SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+            elif SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
+                SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+            engine = create_engine(
+                SQLALCHEMY_DATABASE_URL,
+                pool_pre_ping=True,
+                pool_recycle=300,
+            )
+        else:
+            raise e
     IS_SQLITE = False
 else:
     env_db = os.getenv("NEXO_DB_PATH")
