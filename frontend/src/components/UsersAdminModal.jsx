@@ -17,8 +17,27 @@ import {
   Copy,
   ExternalLink,
   Share2,
+  Sparkles,
 } from 'lucide-react';
 import { formatGrado } from './ClassroomMapGrid';
+
+/**
+ * Genera un PIN aleatorio de 4 dígitos garantizando que no esté duplicado con usuarios existentes.
+ */
+export function generarPinAleatorioUnico(usuariosExistentes = []) {
+  const pinesUsados = new Set(
+    (usuariosExistentes || [])
+      .map((u) => String(u.pin_acceso || '').trim())
+      .filter(Boolean)
+  );
+  for (let i = 0; i < 100; i++) {
+    const pin = String(Math.floor(1000 + Math.random() * 9000));
+    if (!pinesUsados.has(pin)) {
+      return pin;
+    }
+  }
+  return String(Math.floor(1000 + Math.random() * 9000));
+}
 
 /**
  * Normaliza cualquier número telefónico al formato internacional de WhatsApp Colombia (+57).
@@ -244,6 +263,12 @@ export default function UsersAdminModal({
   const [filtroRutaEstado, setFiltroRutaEstado] = useState('');
   const [filtroRutaAuditor, setFiltroRutaAuditor] = useState('');
 
+  useEffect(() => {
+    if (isOpen && !nuevoPin) {
+      setNuevoPin(generarPinAleatorioUnico(usuarios));
+    }
+  }, [isOpen, usuarios]);
+
   // Sincronizar salones marcados SOLO al cambiar de auditor o al abrir el modal
   // (evita que el polling cada 5s borre la selección en curso del usuario)
   const sincronizarChecksDeAuditor = (auditorId, listaSalones) => {
@@ -466,7 +491,7 @@ export default function UsersAdminModal({
         rol: nuevoRol,
       });
       setNuevoNombre('');
-      setNuevoPin('');
+      setNuevoPin(generarPinAleatorioUnico(usuarios));
       setNuevoTelefono('');
       setNuevoRol('AUDITOR');
       setSuccessMsg('Perfil creado exitosamente.');
@@ -744,20 +769,39 @@ export default function UsersAdminModal({
                     />
                   </div>
                   <div className="lg:col-span-2">
-                    <label className="block text-[10px] text-neutral-400 mb-1">
-                      PIN (4 dígitos)
+                    <label className="block text-[10px] text-neutral-400 mb-1 flex items-center justify-between">
+                      <span>PIN (4 dígitos)</span>
+                      <button
+                        type="button"
+                        onClick={() => setNuevoPin(generarPinAleatorioUnico(usuarios))}
+                        title="Generar nuevo PIN único"
+                        className="text-[9px] text-neutral-400 hover:text-white inline-flex items-center gap-0.5 cursor-pointer font-mono"
+                      >
+                        <Sparkles className="w-2.5 h-2.5" />
+                        <span>Auto</span>
+                      </button>
                     </label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={4}
-                      placeholder="4040"
-                      value={nuevoPin}
-                      onChange={(e) =>
-                        setNuevoPin(e.target.value.replace(/\D/g, '').slice(0, 4))
-                      }
-                      className="w-full h-9 bg-[#000000] border border-[#262626] focus:border-white rounded-xl px-3 text-xs font-mono font-bold text-white tracking-widest focus:outline-none"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={4}
+                        placeholder="4040"
+                        value={nuevoPin}
+                        onChange={(e) =>
+                          setNuevoPin(e.target.value.replace(/\D/g, '').slice(0, 4))
+                        }
+                        className="w-full h-9 bg-[#000000] border border-[#262626] focus:border-white rounded-xl pl-3 pr-8 text-xs font-mono font-bold text-white tracking-widest focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setNuevoPin(generarPinAleatorioUnico(usuarios))}
+                        title="Generar otro PIN aleatorio"
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 text-neutral-500 hover:text-white transition-colors"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                   <div className="lg:col-span-3">
                     <label className="block text-[10px] text-neutral-400 mb-1 flex items-center justify-between">
@@ -922,18 +966,28 @@ export default function UsersAdminModal({
                           {/* PIN */}
                           <td className="py-3 px-2.5">
                             {isEditing ? (
-                              <input
-                                type="text"
-                                inputMode="numeric"
-                                maxLength={4}
-                                value={editPin}
-                                onChange={(e) =>
-                                  setEditPin(
-                                    e.target.value.replace(/\D/g, '').slice(0, 4)
-                                  )
-                                }
-                                className="w-20 bg-[#000000] border border-white rounded-lg px-2 py-1 text-xs font-mono font-bold text-white"
-                              />
+                              <div className="relative inline-flex items-center">
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  maxLength={4}
+                                  value={editPin}
+                                  onChange={(e) =>
+                                    setEditPin(
+                                      e.target.value.replace(/\D/g, '').slice(0, 4)
+                                    )
+                                  }
+                                  className="w-24 bg-[#000000] border border-white rounded-lg pl-2 pr-6 py-1 text-xs font-mono font-bold text-white tracking-widest"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setEditPin(generarPinAleatorioUnico(usuarios))}
+                                  title="Generar nuevo PIN único"
+                                  className="absolute right-1 text-neutral-400 hover:text-white"
+                                >
+                                  <Sparkles className="w-3 h-3" />
+                                </button>
+                              </div>
                             ) : (
                               <span className="inline-flex items-center gap-1 font-mono font-bold text-white bg-[#000000] px-2 py-0.5 rounded border border-[#262626]">
                                 <KeyRound className="w-3 h-3 text-neutral-400" />

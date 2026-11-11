@@ -186,6 +186,17 @@ def normalizar_telefono_colombia(telefono: Optional[str]) -> Optional[str]:
     return digitos
 
 
+def generar_pin_unico(db: Session) -> str:
+    """Genera un PIN numérico de 4 dígitos aleatorio no utilizado."""
+    import random
+    pines_existentes = {u.pin_acceso for u in db.query(Usuario.pin_acceso).all() if u.pin_acceso}
+    for _ in range(100):
+        candidato = f"{random.randint(1000, 9999)}"
+        if candidato not in pines_existentes:
+            return candidato
+    return f"{random.randint(1000, 9999)}"
+
+
 def generar_usuario_interno(db: Session, nombre: str) -> str:
     limpio = (
         nombre.strip()
@@ -910,7 +921,12 @@ def crear_usuario(
     verificar_es_admin(db, payload.admin_id, x_usuario_id)
 
     nombre_limpio = payload.nombre.strip()
-    pin_limpio = payload.pin_acceso.strip()
+    pin_raw = (payload.pin_acceso or "").strip()
+    if not pin_raw or pin_raw.lower() in ("auto", "none"):
+        pin_limpio = generar_pin_unico(db)
+    else:
+        pin_limpio = pin_raw
+
     telefono_limpio = normalizar_telefono_colombia(payload.telefono)
     rol_limpio = (
         payload.rol.strip().upper()

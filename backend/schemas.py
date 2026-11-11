@@ -39,7 +39,7 @@ class SalonAsignadoResumen(BaseModel):
 
 class UsuarioCreateRequest(BaseModel):
     nombre: str = Field(..., min_length=2)
-    pin_acceso: str = Field(..., min_length=4, max_length=4)
+    pin_acceso: Optional[str] = None
     telefono: Optional[str] = None
     rol: str = Field(default="AUDITOR")
     usuario: Optional[str] = None
