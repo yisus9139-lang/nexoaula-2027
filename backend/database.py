@@ -4,31 +4,44 @@ import sqlite3
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-env_db = os.getenv("NEXO_DB_PATH")
-if env_db:
-    DB_FILE = Path(env_db)
-    DB_FILE.parent.mkdir(parents=True, exist_ok=True)
+raw_database_url = os.getenv("DATABASE_URL") or os.getenv("NEXO_DATABASE_URL")
+
+if raw_database_url:
+    # Soporte para prefijo postgres:// común en Render, Supabase y Neon
+    if raw_database_url.startswith("postgres://"):
+        raw_database_url = raw_database_url.replace("postgres://", "postgresql://", 1)
+
+    SQLALCHEMY_DATABASE_URL = raw_database_url
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        pool_pre_ping=True,
+        pool_recycle=300,
+    )
+    IS_SQLITE = False
 else:
-    DB_FILE = Path(__file__).resolve().parent / "nexoaula.db"
+    env_db = os.getenv("NEXO_DB_PATH")
+    if env_db:
+        DB_FILE = Path(env_db)
+        DB_FILE.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        DB_FILE = Path(__file__).resolve().parent / "nexoaula.db"
 
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_FILE.as_posix()}"
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_FILE.as_posix()}"
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        connect_args={"check_same_thread": False, "timeout": 30},
+    )
+    IS_SQLITE = True
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False, "timeout": 30},
-)
-
-
-@event.listens_for(engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    if isinstance(dbapi_connection, sqlite3.Connection):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA journal_mode=WAL;")
-        cursor.execute("PRAGMA synchronous=NORMAL;")
-        cursor.execute("PRAGMA busy_timeout=30000;")
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.close()
-
+    @event.listens_for(engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        if isinstance(dbapi_connection, sqlite3.Connection):
+            cursor = dbapi_connection.cursor()
+            cursor.execute("PRAGMA journal_mode=WAL;")
+            cursor.execute("PRAGMA synchronous=NORMAL;")
+            cursor.execute("PRAGMA busy_timeout=30000;")
+            cursor.execute("PRAGMA foreign_keys=ON;")
+            cursor.close()
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -105,6 +118,12 @@ CREATE TABLE IF NOT EXISTS auditoria_2027 (
 
 
 def init_db():
+    if not IS_SQLITE:
+        # Modo PostgreSQL (Neon, Supabase o Render PostgreSQL)
+        import models  # Asegura el registro de modelos en Base.metadata
+        Base.metadata.create_all(bind=engine)
+        return
+
     with engine.begin() as conn:
         conn.execute(text("PRAGMA journal_mode=WAL;"))
 

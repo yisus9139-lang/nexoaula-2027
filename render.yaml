@@ -14,3 +14,5 @@ services:
         generateValue: true
       - key: NEXO_LLAVE_MAESTRA
         value: NEXO-RECTORIA-2027
+      - key: DATABASE_URL
+        sync: false
