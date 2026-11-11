@@ -2037,9 +2037,15 @@ async def subir_excel(
     corte_id: Optional[int] = Query(None),
     admin_id: Optional[int] = Query(None),
     x_usuario_id: Optional[int] = Header(None, alias="X-Usuario-Id"),
+    x_session_token: Optional[str] = Header(None, alias="X-Session-Token"),
     db: Session = Depends(get_db),
 ):
-    verificar_es_admin(db, admin_id=admin_id, x_usuario_id=x_usuario_id)
+    verificar_es_admin(
+        db,
+        admin_id=admin_id,
+        x_usuario_id=x_usuario_id,
+        x_session_token=x_session_token,
+    )
 
     corte = obtener_corte_activo_o_especifico(db, corte_id)
     verificar_corte_abierto(corte)
@@ -2133,17 +2139,14 @@ async def subir_excel(
             grupo=grupo,
             sede=sede,
         )
-        db.add(nuevo_est)
-        db.flush()
-
         nueva_aud = Auditoria2027(
-            estudiante_id=nuevo_est.id,
             corte_id=corte.id,
             asistio=False,
             estado_auditoria="PENDIENTE",
             fecha_actualizacion=now,
         )
-        db.add(nueva_aud)
+        nuevo_est.auditorias.append(nueva_aud)
+        db.add(nuevo_est)
         insertados += 1
 
     if insertados == 0:

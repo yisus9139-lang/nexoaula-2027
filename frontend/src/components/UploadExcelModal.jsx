@@ -69,6 +69,9 @@ export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUs
       if (corteId) {
         uploadUrl.searchParams.append('corte_id', String(corteId));
       }
+      if (currentUser?.id) {
+        uploadUrl.searchParams.append('admin_id', String(currentUser.id));
+      }
 
       const response = await fetch(uploadUrl.toString(), {
         method: 'POST',
@@ -76,10 +79,19 @@ export default function UploadExcelModal({ isOpen, onClose, onSuccess, currentUs
         body: formData,
       });
 
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        // Fallback si la respuesta no viene en formato JSON
+      }
+
       if (!response.ok) {
         throw new Error(
-          data.detail || 'Ocurrió un problema al procesar el archivo Excel.'
+          data?.detail ||
+          (response.status === 504 || response.status === 502
+            ? 'El servidor tardó en procesar la importación. Espera unos segundos y recarga la página para verificar los datos importados.'
+            : `Error del servidor (${response.status}).`)
         );
       }
 
