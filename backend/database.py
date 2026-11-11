@@ -1,6 +1,15 @@
 from pathlib import Path
 import os
 import sqlite3
+
+# Cargar automáticamente variables de entorno locales desde archivo .env si existe
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+    load_dotenv(Path(__file__).resolve().parent / ".env")
+except Exception:
+    pass
+
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
